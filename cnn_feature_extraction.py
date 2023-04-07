@@ -9,16 +9,19 @@ import os
 import numpy as np
 from torchsummary import summary
 import time
+from model.model_pooling import EmbeddingNet
 
+
+torch.backends.cudnn.benchmark = True
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 image_size = config.IMAGE_SIZE
-annotations_file = r"data\train_metadata.csv"
-root_path = r"E:\STVD_DL\data\train"
+annotations_file = r"data\negative_metadata.csv"
+root_path = r"E:\STVD_DL\data\test"
 batch_size = config.BATCH_SIZE
 os.environ['TORCH_HOME'] = r"model_assets"
 
-OUTPUT_FILE = r'output\rs50_train_descriptor.npz'
+OUTPUT_FILE = r'output\neg_test_descriptor.npz'
 
 def get_vgg_model():    
     model = models.vgg16(pretrained=True)
@@ -57,13 +60,17 @@ def main():
     ])
 
     stvd_dataset =  STVDDataset(annotations_file=annotations_file, img_dir=root_path, transform=transform)
-    stvd_loader = DataLoader(dataset=stvd_dataset, batch_size=batch_size, shuffle=False, num_workers=1)
+    stvd_loader = DataLoader(dataset=stvd_dataset, batch_size=batch_size, shuffle=False, num_workers=2)
 
     pretrained_model = get_resnet50_model()
     # pretrained_model = get_vgg_model()
     # print(pretrained_model)
     # pretrained_model = get_inceptionv3_model()
     # print(pretrained_model)
+
+    # pool_names = ['mac', 'spoc', 'rmac', 'gem']
+    # pretrained_model =  EmbeddingNet(pool_names[0])
+    # pretrained_model.eval()   
     
     # setting device on GPU if available, else CPU    
     print('Using device:', DEVICE)
@@ -87,12 +94,12 @@ def main():
         for img_names, images, labels in stvd_loader:            
             images = images.to(DEVICE)
             outputs = pretrained_model(images)
-            for i in range(len(outputs)):
-                # print(img_names[i], labels[i], outputs[i].shape) 
+            for i in range(len(outputs)):                 
                 outputs[i] = outputs[i] / (outputs[i].pow(2).sum(0, keepdim=True).sqrt())
                 image_ids.append(str(img_names[i]))        
                 class_ids.append(labels[i].numpy())
                 descriptors.append(outputs[i].cpu().numpy().squeeze())
+                # print(img_names[i], labels[i].numpy(), outputs[i].cpu().numpy().squeeze().shape)
 
             # break
     

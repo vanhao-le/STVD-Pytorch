@@ -1,10 +1,14 @@
 data/*
 data_setD/*
+data_setC/*
+data_copy/*
 
 model_assets/*
 output/*
-output_d/*
+output_only_positiveD/*
 output_setD/*
+output_setC/*
+output_pooling/*
 
 
 # Byte-compiled / optimized / DLL files

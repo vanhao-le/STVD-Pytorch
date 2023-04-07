@@ -3,14 +3,14 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-matching_file = r'output\rs50_matching.csv'
-OUTPUT_FILE = r"output\rs50_result.npz"
+matching_file = r'output\KF_matching.csv'
+OUTPUT_FILE = r"output\KF_result.npz"
 
 def plot_precision_recall_curve():
     df = pd.read_csv(matching_file)
     # q_image,q_class,ref_image,ref_class,score
 
-    thresholds = np.arange(start=0.7, stop=0.91, step=0.1)
+    thresholds = np.arange(start=0., stop=0.91, step=0.1)
     high_threshold = np.arange(start=0.91, stop=1., step=0.003)
     thresholds = np.append(thresholds, high_threshold)
     print("Thresolds:", thresholds)
@@ -63,34 +63,34 @@ def plot_precision_recall_curve():
         print(np.round(th,3), TN, TP, FP, FN, FP_b, FP_c, (2*pre*rec) / (pre + rec))
 
     
-    # np.savez(
-    #     OUTPUT_FILE,
-    #     threshold =thresholds,
-    #     precision = Precision,
-    #     recall = Recall,
-    #     F1_score = F1_score
-    # )
+    np.savez(
+        OUTPUT_FILE,
+        threshold =thresholds,
+        precision = Precision,
+        recall = Recall,
+        F1_score = F1_score
+    )
     
-    # # #create precision recall curve
-    # fig, (ax1, ax2) = plt.subplots(1, 2)
+    # #create precision recall curve
+    fig, (ax1, ax2) = plt.subplots(1, 2)
 
 
-    # ax1.plot(Recall, Precision, color='blue')    
-    # # add axis labels to plot
-    # ax1.set_title('Precision-Recall Curve')
-    # ax1.set_ylabel('Precision')
-    # ax1.set_xlabel('Recall')
-    # ax1.grid()
+    ax1.plot(Recall, Precision, color='blue')    
+    # add axis labels to plot
+    ax1.set_title('Precision-Recall Curve')
+    ax1.set_ylabel('Precision')
+    ax1.set_xlabel('Recall')
+    ax1.grid()
 
-    # ax2.plot(thresholds, F1_score, color='blue')
-    # ax2.set_ylabel('F1 score')
-    # # ax.set_ylim(top=1)
-    # ax2.set_xlabel('Threshold')
-    # # ax2.set_xlim(left=0, right=1)
-    # ax2.grid()
+    ax2.plot(thresholds, F1_score, color='blue')
+    ax2.set_ylabel('F1 score')
+    # ax.set_ylim(top=1)
+    ax2.set_xlabel('Threshold')
+    # ax2.set_xlim(left=0, right=1)
+    ax2.grid()
 
-    # #display plot
-    # plt.show()
+    #display plot
+    plt.show()
 
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@ import pandas as pd
 
 
 OUTPUT_PATH = Path("output")
-OUTPUT_FILE = OUTPUT_PATH / "abc.npz"
+OUTPUT_FILE = OUTPUT_PATH / "pos_train_descriptor.npz"
 DATA_PATH = r"data"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -23,10 +23,10 @@ def generate_query_descriptors(image_ids):
     descriptors = []
 
     # for image_id in image_ids:
-    for image_id in range(12):
+    for image_id in range(5000):
         
         class_id = np.random.randint(242, size=1).squeeze()       
-        embedding = torch.rand(4096)
+        embedding = torch.rand(2048)
         # embedding = embedding / (embedding.pow(2).sum(0, keepdim=True).sqrt())
         embedding = embedding.numpy().squeeze()
         # print(embedding)
@@ -48,7 +48,7 @@ def main():
 
     
     # Loading subset of query images    
-    csv_path = os.path.join(DATA_PATH, "train_metadata.csv")
+    csv_path = os.path.join(DATA_PATH, "positive_metadata.csv")
     # print(csv_path)
     query_subset = pd.read_csv(csv_path)
     query_image_ids = query_subset.classIDx.values.astype("U")

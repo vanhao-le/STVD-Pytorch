@@ -4,7 +4,7 @@ import time
 import pandas as pd
 
 
-QUERY_DESC = r'output\KF_test_descriptor.npz'
+QUERY_DESC = r'output\pos_test_descriptor.npz'
 query = np.load(QUERY_DESC)
 rows = len(query['image_ids'])
 q_image_ids = query['image_ids']
@@ -12,7 +12,7 @@ q_class_ids = query['class_ids']
 q_descriptors = query['descriptors']
 
 
-REF_DESC = r'output\KF_train_descriptor.npz'
+REF_DESC = r'output\neg_test_descriptor.npz'
 reference = np.load(REF_DESC)
 cols = len(reference['image_ids'])
 r_image_ids = reference['image_ids']
@@ -20,12 +20,12 @@ r_class_ids = reference['class_ids']
 r_descriptors = reference['descriptors']
 
 
-device = "cuda:1"
+device = "cuda:0"
 
 tensor_r_descriptors = torch.from_numpy(r_descriptors)
 tensor_r_descriptors = tensor_r_descriptors.to(device)
 
-ouput_csv = r"output\KF_matching.csv"
+ouput_csv = r"output\test_neg_inter_matching.csv"
 
 if __name__ == '__main__':
     print("[INFO] starting .........")
@@ -43,11 +43,9 @@ if __name__ == '__main__':
         max_value = max_value.cpu().numpy()
         
         case = {
-            'q_image': q_image_ids[i],
-            'q_class': q_class_ids[i],
-            'ref_image': r_image_ids[max_indx],
-            'ref_class': r_class_ids[max_indx],
-            'score': max_value
+            'image_name': q_image_ids[i],
+            'classIDx': q_class_ids[i],           
+            'inter_score': max_value
         }
         data.append(case)
 

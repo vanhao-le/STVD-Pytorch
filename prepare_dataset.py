@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from collections import OrderedDict
 import cv2
+import numpy as np
+
 
 DATA_PATH = Path("data/")
 GROUNDTRUTH_FILE = DATA_PATH / "groundtruth.csv"
@@ -11,13 +13,22 @@ CATEGORY_FILE = DATA_PATH / "category.csv"
 DUPLICATE_STATISTIC_FILE = DATA_PATH / "near_duplicate_stats.csv"
 
 def generate_category():
-
+    VIDEO_PATH = r'E:\STVD\stvd\references'
     df = pd.read_csv(REFERENCE_FILE)
     data = []
     for idx, item in df.iterrows():
         class_name = item['Reference_Video']
+        video_path = os.path.join(VIDEO_PATH, class_name)
+        cap = cv2.VideoCapture(video_path)
+        fps = np.round(cap.get(cv2.CAP_PROP_FPS), 2)        
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        duration = round(frame_count/fps, 3)
         class_name = str(class_name).split('.')[0]
-        case = {'class_name': class_name, 'classIDx': idx}
+        case = {
+            'class_name': class_name,
+            'classIDx': idx,
+            'duration_sec': duration,
+        }
         data.append(case)
     
     df = pd.DataFrame(data)
@@ -100,11 +111,11 @@ def generate_video():
 
 def main():
 
-    # generate_category()
+    generate_category()
 
     # near_duplicate_statistic()
 
-    generate_video()
+    # generate_video()
 
     
 
