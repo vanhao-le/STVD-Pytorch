@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-ZNCC_RESULT = r"output\zncc_result.npz"
-VGG_RESULT = r"output\vgg16_result.npz"
-RES_RESULT = r"output\rs50_result.npz"
-GGL_RESULT = r"output\ggl_result.npz"
+ZNCC_RESULT = r"output_setD\zncc_result.npz"
+VGG_RESULT = r"output_setD\vgg16_result.npz"
+RES_RESULT = r"output_setD\rs50_result.npz"
+GGL_RESULT = r"output_setD\ggl_result.npz"
 
 KF_RESULT = r"output\KF_result.npz"
 
@@ -16,11 +16,11 @@ KF_RESULT = r"output\KF_result.npz"
 # zncc_f1 = zncc_data['F1_score']
 
 
-# vgg_data = np.load(VGG_RESULT)
-# vgg_threshold = vgg_data['threshold']
-# vgg_precision = vgg_data['precision']
-# vgg_recall = vgg_data['recall']
-# vgg_f1 = vgg_data['F1_score']
+vgg_data = np.load(VGG_RESULT)
+vgg_threshold = vgg_data['threshold']
+vgg_precision = vgg_data['precision']
+vgg_recall = vgg_data['recall']
+vgg_f1 = vgg_data['F1_score']
 
 
 rs_data = np.load(RES_RESULT)
@@ -35,11 +35,11 @@ kf_precision = kf_data['precision']
 kf_recall = kf_data['recall']
 kf_f1 = kf_data['F1_score']
 
-# ggl_data = np.load(GGL_RESULT)
-# ggl_threshold = ggl_data['threshold']
-# ggl_precision = ggl_data['precision']
-# ggl_recall = ggl_data['recall']
-# ggl_f1 = ggl_data['F1_score']
+ggl_data = np.load(GGL_RESULT)
+ggl_threshold = ggl_data['threshold']
+ggl_precision = ggl_data['precision']
+ggl_recall = ggl_data['recall']
+ggl_f1 = ggl_data['F1_score']
 
 
 # #create precision recall curve

@@ -10,6 +10,8 @@ output_setD/*
 output_setC/*
 output_pooling/*
 
+keyframe/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

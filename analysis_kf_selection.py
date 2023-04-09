@@ -2,9 +2,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-
+import matplotlib 
 
 # plt.style.use('classic')
+
+# plt.rcParams["font.family"] = "Times New Roman"
+# matplotlib.rc('xtick', labelsize=20) 
+# matplotlib.rc('ytick', labelsize=20) 
 
 KF_FILE = r'output\keyframe_train_selection.csv'
 CATE_FILE = r'data\category.csv'
@@ -410,15 +414,24 @@ def check_high_std():
         df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
         index_list = df_index['period'].to_list()
         print(th, len(set(class_ids)), len(set(index_list)))
-        
+
+def get_low_std():
+    
+    REFERENCE_FILE = r'output\reference_characterization.csv'
+    OUTPUT_FILE = r'keyframe\reference_low_std.csv'
+    df = pd.read_csv(REFERENCE_FILE)
+
+    df_index = df.loc[df['std_score'] <= 0.05]
+
+    df_index.to_csv(OUTPUT_FILE, index=False, header=True)   
+
+    print("Number of references: {}".format(len(set(df_index['classIDx'].to_list()))))
 
 def check_worst_cases():
     
-    REFERENCE_FILE = r'output\reference_characterization.csv'
-    df = pd.read_csv(REFERENCE_FILE)
-    
-    df['min_score'] = df['mean_score'] - df['std_score']     
-
+    REFERENCE_FILE = r'keyframe\reference_low_std.csv'
+    df = pd.read_csv(REFERENCE_FILE) 
+   
     x = np.arange(0., -0.45, -0.005)
 
     for i in x:
@@ -429,11 +442,22 @@ def check_worst_cases():
         index_list = df_index['period'].to_list()
         print(th, len(set(class_ids)), len(set(index_list)))
 
+def get_worst_valid():
+    
+    REFERENCE_FILE = r'keyframe\reference_low_std.csv'
+    OUTPUT_FILE = r'keyframe\reference_worst_valid.csv'
+    df = pd.read_csv(REFERENCE_FILE)
+
+    df_index = df.loc[df['min_score'] >= -0.4]
+
+    df_index.to_csv(OUTPUT_FILE, index=False, header=True)   
+
+    print("Number of references: {}".format(len(set(df_index['classIDx'].to_list()))))
+
 def check_full_separable():
     
-    REFERENCE_FILE = r'output\reference_characterization.csv'
-    df = pd.read_csv(REFERENCE_FILE)
-    df['min_score'] = df['mean_score'] - df['std_score']   
+    REFERENCE_FILE = r'keyframe\reference_worst_valid.csv'
+    df = pd.read_csv(REFERENCE_FILE)    
 
     df_index = df.loc[df['min_score'] > 0.].copy()
     class_ids = df_index['classIDx'].to_list()
@@ -443,12 +467,10 @@ def check_full_separable():
 
 def check_not_full_separable():
     
-    REFERENCE_FILE = r'output\reference_characterization.csv'
-    df = pd.read_csv(REFERENCE_FILE)
-    df['min_score'] = df['mean_score'] - df['std_score']
-    df['max_score'] = df['mean_score'] + df['std_score']   
+    REFERENCE_FILE = r'keyframe\reference_worst_valid.csv'
+    df = pd.read_csv(REFERENCE_FILE)  
 
-    df_index = df.loc[(df['max_score'] >=0.)].copy()
+    df_index = df.loc[(df['min_score'] <= 0.) & (df['max_score'] >= 0.)].copy()
 
     class_ids = df_index['classIDx'].to_list()
     df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
@@ -457,17 +479,55 @@ def check_not_full_separable():
 
 def check_not_too_bad():
     
-    REFERENCE_FILE = r'output\reference_characterization.csv'
-    df = pd.read_csv(REFERENCE_FILE)
-    df['min_score'] = df['mean_score'] - df['std_score']
-    df['max_score'] = df['mean_score'] + df['std_score']   
+    REFERENCE_FILE = r'keyframe\reference_worst_valid.csv'
 
-    df_index = df.loc[(df['min_score'] >= -0.39) & (df['max_score'] <= 0.)].copy()
+    df = pd.read_csv(REFERENCE_FILE)   
+    df_index = df.loc[df['max_score'] < 0.].copy()
 
     class_ids = df_index['classIDx'].to_list()
     df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
     index_list = df_index['period'].to_list()
     print(len(set(class_ids)), len(set(index_list)))  
+
+def plot_std_worst():
+
+    REFERENCE_FILE = r'keyframe\reference_characterization.csv'
+    df = pd.read_csv(REFERENCE_FILE)
+
+    std_list = np.arange(0.05, 0.13, 0.001)
+
+       
+    data_worst = {}
+    data = {}
+    for std_score in std_list:
+        df_index = df.loc[(df['std_score'] > std_score) & (df['min_score'] <= -0.4)].copy()
+        df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
+        index_list = df_index['period'].to_list()
+        value = len(set(index_list))
+        data_worst[np.round(std_score, 3)] = value
+
+        df_index = df.loc[(df['std_score'] > std_score) & (df['min_score'] > -0.4)].copy()
+        df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
+        index_list = df_index['period'].to_list()
+        value = len(set(index_list))        
+        data[np.round(std_score, 3)] = value
+        
+
+    # print(data)
+
+    data_list = sorted(data_worst.items(), key=lambda x: x[0])
+    data_lst = sorted(data.items(), key=lambda x: x[0])
+
+    x, y = zip(*data_list)
+    x_1, y_1 = zip(*data_lst)
+
+    plt.plot(x, y, label= "high std, less discriminated")
+    plt.plot(x_1, y_1, label= "high std, more discriminated")
+    plt.xlabel("Standard deviation")
+    plt.ylabel("Distribution")
+    plt.legend(loc="upper right")
+    plt.show()
+
 
 def main():
     print("[INFO] starting .........")
@@ -487,7 +547,7 @@ def main():
 
     # plot_reference()
 
-    join_sorted_score_reference_characterize()
+    # join_sorted_score_reference_characterize()
 
     # save_reference_characterization()
 
@@ -495,7 +555,11 @@ def main():
 
     # check_high_std()
 
+    # get_low_std()
+
     # check_worst_cases()
+
+    # get_worst_valid()
 
     # check_full_separable()
 
@@ -503,6 +567,8 @@ def main():
 
     # check_not_too_bad()
 
+
+    plot_std_worst()
 
     '''
     get 1 frame for 1 video
