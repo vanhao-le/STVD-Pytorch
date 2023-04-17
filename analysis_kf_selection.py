@@ -465,29 +465,97 @@ def check_full_separable():
     index_list = df_index['period'].to_list()
     print(len(set(class_ids)), len(set(index_list)))
 
-def check_not_full_separable():
-    
+def get_full_separable():
+
     REFERENCE_FILE = r'keyframe\reference_worst_valid.csv'
+    OUTPUT_FILE = r'keyframe\KF_full_separable.csv'
+    REMAIN_FILE = r'keyframe\KF_remaining_full_separable.csv'
+
+    df = pd.read_csv(REFERENCE_FILE)
+    df_index = df.loc[df['min_score'] > 0.].copy() 
+    class_ids = df_index['classIDx'].to_list()
+
+    class_lst = set(class_ids)
+
+    df_remained = df[~df.classIDx.isin(class_lst)]
+    print(len(set(df_remained['classIDx'].to_list())))
+    df_remained.to_csv(REMAIN_FILE, index=False, header=True)
+
+    data = pd.DataFrame()
+
+    for class_id in class_lst:
+        df_tmp = df_index.loc[df_index['classIDx'] == class_id].copy()
+        df_rs = df_tmp.loc[df_tmp['min_score'] == df_tmp['min_score'].max()]
+        data = pd.concat([data, df_rs], ignore_index=True)
+
+
+    data = data.sort_values(by=['classIDx'], ascending=True)
+    
+    data.to_csv(OUTPUT_FILE, index=False, header=True)
+   
+
+
+def get_not_full_separable():
+    
+    REFERENCE_FILE = r'keyframe\KF_remaining_full_separable.csv'
+    OUTPUT_FILE =  r'keyframe\KF_not_separeble.csv'
+    REMAIN_FILE = r'keyframe\KF_remaining_not_separeble.csv'
+
     df = pd.read_csv(REFERENCE_FILE)  
 
-    df_index = df.loc[(df['min_score'] <= 0.) & (df['max_score'] >= 0.)].copy()
+    df_index = df.loc[(df['min_score'] <= 0.) & (df['max_score'] >= 0.)].copy()   
 
     class_ids = df_index['classIDx'].to_list()
-    df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
-    index_list = df_index['period'].to_list()
-    print(len(set(class_ids)), len(set(index_list)))  
+    class_lst = set(class_ids)
+    df_remained = df[~df.classIDx.isin(class_lst)]
+    print(len(set(df_remained['classIDx'].to_list())))
+    df_remained.to_csv(REMAIN_FILE, index=False, header=True)
 
-def check_not_too_bad():
+    data = pd.DataFrame()
+
+    for class_id in class_lst:
+        df_tmp = df_index.loc[df_index['classIDx'] == class_id].copy()
+        df_rs = df_tmp.loc[df_tmp['min_score'] == df_tmp['min_score'].max()]
+        data = pd.concat([data, df_rs], ignore_index=True)
+
+
+    data = data.sort_values(by=['classIDx'], ascending=True)
     
-    REFERENCE_FILE = r'keyframe\reference_worst_valid.csv'
+    data.to_csv(OUTPUT_FILE, index=False, header=True)
+
+    # df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
+    # index_list = df_index['period'].to_list()
+    # df_index.to_csv(OUTPUT_FILE, index=False, header=True)
+    # print(len(set(class_ids)), len(set(index_list)))  
+    # print(set(class_ids))
+
+def get_not_bad():
+    
+    REFERENCE_FILE = r'keyframe\KF_remaining_not_separeble.csv'
+    OUTPUT_FILE =  r'keyframe\KF_not_bad.csv'
 
     df = pd.read_csv(REFERENCE_FILE)   
     df_index = df.loc[df['max_score'] < 0.].copy()
 
     class_ids = df_index['classIDx'].to_list()
-    df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
-    index_list = df_index['period'].to_list()
-    print(len(set(class_ids)), len(set(index_list)))  
+    class_lst = set(class_ids)
+
+    data = pd.DataFrame()
+
+    for class_id in class_lst:
+        df_tmp = df_index.loc[df_index['classIDx'] == class_id].copy()
+        df_rs = df_tmp.loc[df_tmp['min_score'] == df_tmp['min_score'].max()]
+        data = pd.concat([data, df_rs], ignore_index=True)
+
+
+    data = data.sort_values(by=['classIDx'], ascending=True)
+    
+    data.to_csv(OUTPUT_FILE, index=False, header=True)
+
+
+    # df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
+    # index_list = df_index['period'].to_list()
+    # print(len(set(class_ids)), len(set(index_list)))  
 
 def plot_std_worst():
 
@@ -528,6 +596,23 @@ def plot_std_worst():
     plt.legend(loc="upper right")
     plt.show()
 
+def join_KF_files():
+
+    FULL_SEPARABLE = r'keyframe\KF_full_separable.csv'
+    NOT_SEPARABLE = r'keyframe\KF_not_separeble.csv'
+    NOT_BAD = r'keyframe\KF_not_bad.csv'
+    OUTPUT_FILE = r'keyframe\KF_one_per_reference.csv'
+
+    df_s = pd.read_csv(FULL_SEPARABLE)
+    df_n = pd.read_csv(NOT_SEPARABLE)
+    df_b = pd.read_csv(NOT_BAD)
+
+    df = pd.concat([df_s, df_n, df_b], ignore_index=True)
+
+    df = df.sort_values(by=['classIDx'], ascending=True)
+    print("Number of references: {}".format(len(set(df['classIDx'].to_list()))))
+    df.to_csv(OUTPUT_FILE, index=False, header=True)
+
 
 def main():
     print("[INFO] starting .........")
@@ -539,7 +624,7 @@ def main():
 
     # plot_mean_std_error()
 
-    # plot_error()
+    plot_error()
 
     # plot_index_error()
 
@@ -563,12 +648,17 @@ def main():
 
     # check_full_separable()
 
-    # check_not_full_separable()
+    # get_full_separable()
 
-    # check_not_too_bad()
+    # get_not_full_separable()
+
+    # get_not_bad()
+
+    # join_KF_files()
 
 
-    plot_std_worst()
+    # plot_std_worst()
+
 
     '''
     get 1 frame for 1 video

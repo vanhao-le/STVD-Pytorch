@@ -17,6 +17,14 @@ import matplotlib
 
 import matplotlib.pyplot as plt
 
+# RES_RESULT = r"KF_one_result.npz"
+# rs_data = np.load(RES_RESULT)
+# rs_threshold = rs_data['threshold']
+# rs_precision = rs_data['precision']
+# rs_recall = rs_data['recall']
+# rs_f1 = rs_data['F1_score']
+
+
 
 # x = 3
 # print(x**2)
@@ -58,16 +66,24 @@ import matplotlib.pyplot as plt
 # x = np.append(x, [0.])
 # print(x)
 
-POS_DESC = r'output\reference_characterize.npz'
-query = np.load(POS_DESC)
-rows = len(query['class_ids'])
-q_image_ids = query['class_ids']
-q_class_ids = query['frame_ids']
-q_descriptors = query['scores_ids']
+# POS_DESC = r'output_setD\rs50_train_descriptor.npz'
+# query = np.load(POS_DESC)
+# rows = len(query['image_ids'])
+# q_image_ids = query['image_ids']
+# q_class_ids = query['class_ids']
+# q_descriptors = query['descriptors']
 
-for key in query.keys():
-    print(key)
-    print(query[key].shape)
+# for key in query.keys():
+#     print(key)
+#     print(query[key].shape)
+# count = 0
+# count_2 = 0
+# for i in range(rows):
+#     if (q_class_ids[i] < 243):
+#         count += 1
+#     if (q_class_ids[i] >= 243):
+#         count_2 += 1
+# print(count, count_2)
 
 # image_ids = []
 # class_ids = []

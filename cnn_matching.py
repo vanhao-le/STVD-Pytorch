@@ -4,7 +4,7 @@ import time
 import pandas as pd
 
 
-QUERY_DESC = r'output\KF_test_descriptor.npz'
+QUERY_DESC = r'keyframe\fps_0000_test_descriptor.npz'
 query = np.load(QUERY_DESC)
 rows = len(query['image_ids'])
 q_image_ids = query['image_ids']
@@ -12,7 +12,7 @@ q_class_ids = query['class_ids']
 q_descriptors = query['descriptors']
 
 
-REF_DESC = r'output\KF_train_descriptor.npz'
+REF_DESC = r'keyframe\fps_0000_train_descriptor.npz'
 reference = np.load(REF_DESC)
 cols = len(reference['image_ids'])
 r_image_ids = reference['image_ids']
@@ -20,12 +20,12 @@ r_class_ids = reference['class_ids']
 r_descriptors = reference['descriptors']
 
 
-device = "cuda:1"
+device = "cuda:0"
 
 tensor_r_descriptors = torch.from_numpy(r_descriptors)
 tensor_r_descriptors = tensor_r_descriptors.to(device)
 
-ouput_csv = r"output\KF_matching.csv"
+ouput_csv = r"keyframe\fps_0000_matching.csv"
 
 if __name__ == '__main__':
     print("[INFO] starting .........")

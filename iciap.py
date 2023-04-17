@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import pandas as pd
 
 
 
@@ -24,7 +24,6 @@ def cnn_plot():
     vgg_precision = vgg_data['precision']
     vgg_recall = vgg_data['recall']
     vgg_f1 = vgg_data['F1_score']
-
 
     rs_data = np.load(RES_RESULT)
     rs_threshold = rs_data['threshold']
@@ -81,10 +80,81 @@ def cnn_plot():
     #display plot
     plt.show()
 
+def criterion_plot():
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+
+    OUTPUT_FILE = r'iciap_data\sorted_train_matching.csv'
+    df = pd.read_csv(OUTPUT_FILE)
+
+    data = {}
+    for idx, item in df.iterrows():        
+        score = round(item['score'], 3)
+        if score in data:
+            data[score] += 1
+        else:
+            data[score] = 1        
+
+    
+
+    lists = sorted(data.items())
+    x_frame, y_frame = zip(*lists)
+    ax1.plot(x_frame, y_frame, color='black', label='$\phi(X)$ distribution')
+    ax1.legend(loc="upper left")
+    
+    
+    REFERENCE_FILE = r'iciap_data\reference_characterization.csv'
+
+    df = pd.read_csv(REFERENCE_FILE)
+
+    score_list = df['std_score'].to_numpy()
+
+    x = np.arange(0., 0.13, 0.01)
+
+    data = {}
+    for i in x:
+        count = 0
+        for value in score_list:
+            if value < i:
+                count += 1
+        data[i] = count
+
+    data_list = sorted(data.items(), key=lambda x: x[0], reverse=True)
+    # print(data_list)   
+    x_std, y_std = zip(*data_list)
+    ax2.plot(x_std, y_std, color='black', label='$\sigma$ distribution')
+    ax2.legend(loc="upper left")
 
 
+
+    max_list = df['max_score'].to_numpy()
+
+    error_list = np.arange(-0.7, 0.21, 0.01)
+    # print(error_list)
+
+    data_max = {}
+    
+    for i in error_list:
+        count = 0
+        for value in max_list:
+            if value < i:
+                count += 1
+        data_max[i] = count
+
+
+    max_lst = sorted(data_max.items(), key=lambda x: x[0], reverse=True)
+    # print(np.max(max_lst), np.min(max_lst))
+    # print(data_list)   
+    x_max, y_max = zip(*max_lst)
+    ax3.plot(x_max, y_max, color='black', label='$\mathit{z}_{max}$ distribution')
+    ax3.legend(loc="upper left")
+
+    
+    plt.show()
+   
 
 def main():
+    criterion_plot()
 
     print()
 
