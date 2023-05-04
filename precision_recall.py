@@ -3,15 +3,16 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-matching_file = r'output_setD\rs50_matching.csv'
+# matching_file = r'output_setD\rs50_matching.csv'
+matching_file = r'training_data\siamese_matching.csv'
 OUTPUT_FILE = r"keyframe\fps_0000_result.npz"
 
 def plot_precision_recall_curve():
     df = pd.read_csv(matching_file)
     # q_image,q_class,ref_image,ref_class,score
 
-    thresholds = np.arange(start=0.7, stop=0.925, step=0.025)
-    high_threshold = np.arange(start=0.9, stop=1.005, step=0.005)
+    thresholds = np.arange(start=0.9, stop=0.9, step=0.025)
+    high_threshold = np.arange(start=0.999, stop=1., step=0.00001)
     # high_threshold = np.arange(start=0.9, stop=0.975, step=0.005)
     thresholds = np.append(thresholds, high_threshold)
     print("Thresolds:", thresholds)
@@ -27,7 +28,7 @@ def plot_precision_recall_curve():
         FP_b = 0
         FP_c = 0
         for idx, item in df.iterrows():            
-            score = float(item['score'])
+            score = np.round(float(item['score']), 7)
             q_class = int(item['q_class'])
             ref_class = int(item['ref_class'])           
             
@@ -63,9 +64,9 @@ def plot_precision_recall_curve():
         Precision.append(pre)
         Recall.append(rec)
         F1_score.append((2*pre*rec) / (pre + rec))
-        print("Threshold:", np.round(th,3), "TP:", TP, "FP:", FP, "TN:", TN, "FN:", FN, "F1:", (2*pre*rec) / (pre + rec), FP_b, FP_c)
+        print("Threshold:", np.round(th,5), "TP:", TP, "FP:", FP, "TN:", TN, "FN:", FN, "F1:", np.round((2*pre*rec) / (pre + rec), 5), FP_b, FP_c)
 
-    
+    print("Maximum F1:", np.max(F1_score))
     # np.savez(
     #     OUTPUT_FILE,
     #     threshold =thresholds,

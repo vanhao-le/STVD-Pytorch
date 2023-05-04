@@ -3,11 +3,11 @@ from multiprocessing import Pool
 import pandas as pd
 
 NUM_THREADS = 50
-VIDEO_ROOT = r'E:\STVD\stvd\setd\negative'   # Directory for videos
-# VIDEO_ROOT = r'E:\STVD_DL\root_data'
-FRAME_ROOT = r'E:\STVD_DL\data\test'  # Directory for extracted frames
+# VIDEO_ROOT = r'E:\STVD\stvd\setd\negative'   # Directory for videos
+VIDEO_ROOT = r'E:\STVD_DL\root_data'
+FRAME_ROOT = r'E:\STVD_DL\data\val'  # Directory for extracted frames
 
-groundtruth_file = r"data\neg_test_metadata.csv"
+groundtruth_file = r"data\pos_val_metadata.csv"
 
 def split(l, n):
     """Yield successive n-sized chunks from l."""
@@ -22,8 +22,8 @@ def extract(video, classIDx, tmpl='%04d.jpg'):
     FPS = 0.08 for negative
     '''
     tmpl = video[:-4] + '_%d.jpg'
-    # str_command = f'ffmpeg -nostats -loglevel 0 -i {VIDEO_ROOT}/{classIDx}/{video} -vf fps=12 ' f'{FRAME_ROOT}/{classIDx}/{tmpl}'
-    str_command = f'ffmpeg -nostats -loglevel 0 -i {VIDEO_ROOT}/{video} -vf fps=0.08 ' f'{FRAME_ROOT}/{classIDx}/{tmpl}'
+    str_command = f'ffmpeg -nostats -loglevel 0 -i {VIDEO_ROOT}/{classIDx}/{video} -vf fps=12 ' f'{FRAME_ROOT}/{classIDx}/{tmpl}'
+    # str_command = f'ffmpeg -nostats -loglevel 0 -i {VIDEO_ROOT}/{video} -vf fps=0.08 ' f'{FRAME_ROOT}/{classIDx}/{tmpl}'
     # print(str_command
     os.system(str_command)
 

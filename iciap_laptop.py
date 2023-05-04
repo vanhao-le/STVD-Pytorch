@@ -9,7 +9,6 @@ from scipy.signal import find_peaks
 from scipy.signal import argrelextrema
 from scipy.interpolate import interp1d
 from scipy.interpolate import UnivariateSpline
-from csaps import csaps
 from scipy.interpolate import InterpolatedUnivariateSpline
 from scipy.ndimage import rank_filter
 from scipy.signal import argrelextrema
@@ -234,41 +233,41 @@ def criterion_plot_dis():
 
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
-    OUTPUT_FILE = r'iciap_data\sorted_train_matching.csv'
-    df = pd.read_csv(OUTPUT_FILE)
+    # OUTPUT_FILE = r'iciap_data\sorted_train_matching.csv'
+    # df = pd.read_csv(OUTPUT_FILE)
 
-    data = {}
-    count = 0
-    for idx, item in df.iterrows():        
-        score = round(item['score'], 3)
-        if score > 0:
-            count += 1
-        if score in data:
-            data[score] += 1
-        else:
-            data[score] = 1
+    # data = {}
+    # count = 0
+    # for idx, item in df.iterrows():        
+    #     score = round(item['score'], 3)
+    #     if score > 0:
+    #         count += 1
+    #     if score in data:
+    #         data[score] += 1
+    #     else:
+    #         data[score] = 1
     
-    # print("Greater than zero:", count, count / len(df)) # 5 %
+    # # print("Greater than zero:", count, count / len(df)) # 5 %
 
-    lists = sorted(data.items())
-    x_frame, y_frame = zip(*lists)    
-    y_frame = y_frame / np.sum(y_frame)
+    # lists = sorted(data.items())
+    # x_frame, y_frame = zip(*lists)    
+    # y_frame = y_frame / np.sum(y_frame)
    
-    ax1.plot(x_frame, y_frame, color='black', label='$\phi(X)$ distribution')
-    line_0 = ax1.vlines(x=0., ymin=0, ymax = 0.005, color='red', linestyle='--', label=r'$\phi(X)=0$')
+    # ax1.plot(x_frame, y_frame, color='black', label='$\phi(X)$ distribution')
+    # line_0 = ax1.vlines(x=0., ymin=0, ymax = 0.005, color='red', linestyle='--', label=r'$\phi(X)=0$')
     
-    # ax1.set_ylim(0., 950)
-    ax1.set_xticks([-0.6, -0.4, -0.2, 0., 0.2])    
-    # ax1.set_yscale('symlog')
-    ax1.set_yticks([0, 0.0025, 0.005])
+    # # ax1.set_ylim(0., 950)
+    # ax1.set_xticks([-0.6, -0.4, -0.2, 0., 0.2])    
+    # # ax1.set_yscale('symlog')
+    # ax1.set_yticks([0, 0.0025, 0.005])
 
-    ax1.set_ylabel('Features distribution', fontproperties=font_prop_lable)   
-    ax1.set_xlabel('$\phi(X)$ scores \n (a)', fontproperties=font_prop)   
+    # ax1.set_ylabel('Features distribution', fontproperties=font_prop_lable)   
+    # ax1.set_xlabel('$\phi(X)$ scores \n (a)', fontproperties=font_prop)   
     
-    for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
-        label.set_fontproperties(font_prop)
-    ax1.legend(handles=[line_0 ], loc="upper left", prop=font_prop_legend)
-    ax1.grid(which='major', linestyle='--')
+    # for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
+    #     label.set_fontproperties(font_prop)
+    # ax1.legend(handles=[line_0 ], loc="upper left", prop=font_prop_legend)
+    # ax1.grid(which='major', linestyle='--')
     
     
     REFERENCE_FILE = r'iciap_data\reference_characterization.csv'
@@ -307,77 +306,116 @@ def criterion_plot_dis():
 
     
 
-    error_list = np.arange(-0.6, -0.24, 0.01)
-    # print(error_list)
+    # error_list = np.arange(-0.6, -0.24, 0.01)
+    # # print(error_list)
 
-    data_max = {}    
-    for i in error_list:
-        count = 0       
-        for class_id in range(0, 243):            
-            df_class = df.loc[df['classIDx'] == class_id]
-            arr_scores = df_class['min_score'].to_numpy()
-            max_value = np.max(arr_scores)
-            if max_value >= i:
-                count += 1
-        data_max[i] = count
+    # data_max = {}    
+    # for i in error_list:
+    #     count = 0       
+    #     for class_id in range(0, 243):            
+    #         df_class = df.loc[df['classIDx'] == class_id]
+    #         arr_scores = df_class['min_score'].to_numpy()
+    #         max_value = np.max(arr_scores)
+    #         if max_value >= i:
+    #             count += 1
+    #     data_max[i] = count
 
-    max_lst = sorted(data_max.items(), key=lambda x: x[0], reverse=True)
-    # print(np.max(max_lst), np.min(max_lst))
-    # print(data_list)   
-    x_max, y_max = zip(*max_lst)
+    # max_lst = sorted(data_max.items(), key=lambda x: x[0], reverse=True)
+    # # print(np.max(max_lst), np.min(max_lst))
+    # # print(data_list)   
+    # x_max, y_max = zip(*max_lst)
     
-    x_arr = []
-    y_arr = []
-    for i in range(0, len(x_max)):
-        if x_max[i] >= -0.6 and x_max[i] <= -0.24:
-            x_arr.append(x_max[i])
-            y_arr.append(y_max[i])
+    # x_arr = []
+    # y_arr = []
+    # for i in range(0, len(x_max)):
+    #     if x_max[i] >= -0.6 and x_max[i] <= -0.24:
+    #         x_arr.append(x_max[i])
+    #         y_arr.append(y_max[i])
      
 
-    x_np = np.array(x_arr)
-    y_np = np.array(y_arr)
-    x_np = np.sort(x_np)
-    y_np = np.flip(np.sort(y_np))
-    # print(x_np)
-    # print(y_np)
+    # x_np = np.array(x_arr)
+    # y_np = np.array(y_arr)
+    # x_np = np.sort(x_np)
+    # y_np = np.flip(np.sort(y_np))
+    # # print(x_np)
+    # # print(y_np)
 
     
 
-    new_x_coords = np.linspace(np.min(x_np), np.max(x_np), 50, endpoint=True)
-    s = len(new_x_coords) + math.sqrt(2*len(new_x_coords))
-    print(s)
-    tck = interpolate.splrep(x_np, y_np, k=1, s = 15)       
-    new_y_coords = interpolate.splev(new_x_coords, tck)
+    # new_x_coords = np.linspace(np.min(x_np), np.max(x_np), 50, endpoint=True)
+    # s = len(new_x_coords) + math.sqrt(2*len(new_x_coords))
+    # print(s)
+    # tck = interpolate.splrep(x_np, y_np, k=1, s = 15)       
+    # new_y_coords = interpolate.splev(new_x_coords, tck)
 
-    ax3.plot(new_x_coords, new_y_coords, color='black')    
+    # ax3.plot(new_x_coords, new_y_coords, color='black')    
    
-    ax3.vlines(x=-0.4, ymin=235, ymax=243, color='gray', linestyle='--')
-    ax3.hlines(y=242.4, xmin=-0.6, xmax=-0.23, color='gray', linestyle='--')
-    line_2 = ax3.scatter(-0.4, 242.4, c='red', marker='s', label= r"$\beta=-0.4$")
+    # ax3.vlines(x=-0.4, ymin=235, ymax=243, color='gray', linestyle='--')
+    # ax3.hlines(y=242.4, xmin=-0.6, xmax=-0.23, color='gray', linestyle='--')
+    # line_2 = ax3.scatter(-0.4, 242.4, c='red', marker='s', label= r"$\beta=-0.4$")
 
-    ax3.set_ylabel('Reference distribution', fontproperties=font_prop_lable)   
-    ax3.set_xlabel('$\max(\mathit{z}_{min})$ scores \n (c)', fontproperties=font_prop)   
-    ax3.set_xticks([-0.6, -0.5, -0.4, -0.3])
-    ax3.set_yticks([235, 237, 239, 241, 243])
+    # ax3.set_ylabel('Reference distribution', fontproperties=font_prop_lable)   
+    # ax3.set_xlabel('$\max(\mathit{z}_{min})$ scores \n (c)', fontproperties=font_prop)   
+    # ax3.set_xticks([-0.6, -0.5, -0.4, -0.3])
+    # ax3.set_yticks([235, 237, 239, 241, 243])
 
-    # ax3.set_ylim(235, 243.2)
-    ax3.set_xlim(-0.6, -0.23)
+    # # ax3.set_ylim(235, 243.2)
+    # ax3.set_xlim(-0.6, -0.23)
     
-    for label in (ax3.get_xticklabels() + ax3.get_yticklabels()):
-        label.set_fontproperties(font_prop)
-    ax3.legend(handles=[line_2,], loc="lower left", prop=font_prop_legend)   
-    ax3.grid(which='major', linestyle='--')
+    # for label in (ax3.get_xticklabels() + ax3.get_yticklabels()):
+    #     label.set_fontproperties(font_prop)
+    # ax3.legend(handles=[line_2,], loc="lower left", prop=font_prop_legend)   
+    # ax3.grid(which='major', linestyle='--')
 
     
     plt.show()
-    fig.savefig(r'iciap_data\\kf.png', format='png', dpi=400)
+    # fig.savefig(r'iciap_data\\kf.png', format='png', dpi=400)
+
+def high_std_plot():
+
+    INPUT_FILE = r'iciap_data\frame_high_std.csv'
+    df = pd.read_csv(INPUT_FILE)
+
+    std_arr = df['std_score'].to_numpy()
+    std_min = np.min(std_arr)
+    std_max = np.max(std_arr)
+
+    x_values = np.arange(0.05, std_max + 0.01, 0.01)
+    
+    print(x_values)
+    data_pos = {}
+    data_neg = {}
+    for x_i in x_values:        
+        df_pos = df.loc[(df['std_score'] >= x_i) & (df['score'] <= 0) ].copy()
+        df_neg = df.loc[(df['std_score'] >= x_i) & (df['score'] > 0) ].copy()
+        pos_count = len(df_pos)
+        neg_count = len(df_neg)
+        data_pos[x_i] = pos_count
+        data_neg[x_i] = neg_count
+    
+    data_list_pos = sorted(data_pos.items(), key=lambda x: x[0])   
+    x_1, y_1 = zip(*data_list_pos)
+
+    data_list_neg = sorted(data_neg.items(), key=lambda x: x[0])   
+    x_2, y_2 = zip(*data_list_neg)
+
+    plt.bar(x_1, y_1, color ='blue', width = 0.005, label=r'$\phi(X) \leq 0$')
+    plt.bar(x_2, y_2, color ='red', width = 0.005, label='$\phi(X) > 0$')
+    # plt.vlines(x=0, ymin=0, ymax=14000)
+    plt.xlabel("Standard deviation")
+    plt.ylabel("Distribution")
+    plt.legend(loc="upper right")
+    plt.show()
+
 
 def main():
 
     # cnn_plot()
     # criterion_plot()
+    # criterion_plot_dis()
 
-    criterion_plot_dis()
+    high_std_plot()
+
    
 
 if __name__ == '__main__':

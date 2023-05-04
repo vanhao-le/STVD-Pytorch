@@ -18,19 +18,19 @@ POOLING = {
 }
 
 class EmbeddingNet(nn.Module):    
-    def __init__(self, pooling):        
+    def __init__(self, pooling = 'rmac'):        
         super(EmbeddingNet, self).__init__()
-        net_in = models.resnet50(pretrained = True)
+        net_in = models.resnet101(pretrained = True)
         # net_in = models.vgg16(pretrained = True)
         # net_in = models.inception_v3(pretrained = True) #Inception V3 results error for MAC extract
-        for param in net_in.parameters():
-            param.requires_grad = False
+        # for param in net_in.parameters():
+        #     param.requires_grad = False
 
         '''
         initialize features take only convolutions for features, always ends with ReLU to make last activations non-negative
         '''
-        # features = list(net_in.children())[:-2] # -2 for ResNet; -1 for VGG
-        features = list(net_in.features.children())[:-1]
+        features = list(net_in.children())[:-2] # -2 for ResNet; -1 for VGG
+        # features = list(net_in.features.children())[:-1]
         self.features = nn.Sequential(*features)
 
         self.pool = POOLING[pooling]()

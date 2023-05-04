@@ -16,12 +16,12 @@ torch.backends.cudnn.benchmark = True
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 image_size = config.IMAGE_SIZE
-annotations_file = r"data\negative_metadata.csv"
-root_path = r"E:\STVD_DL\data\test"
+annotations_file = r"data\val_positive_metadata.csv"
+root_path = r"E:\STVD_DL\data\val"
 batch_size = config.BATCH_SIZE
 os.environ['TORCH_HOME'] = r"model_assets"
 
-OUTPUT_FILE = r'output\neg_test_descriptor.npz'
+OUTPUT_FILE = r'output\pos_val_descriptor.npz'
 
 def get_vgg_model():    
     model = models.vgg16(pretrained=True)

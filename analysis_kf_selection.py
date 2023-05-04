@@ -415,10 +415,14 @@ def check_high_std():
         index_list = df_index['period'].to_list()
         print(th, len(set(class_ids)), len(set(index_list)))
 
+    # df_index = df.loc[df['std_score'] > 0.1]
+    # for idx, item in df_index.iterrows():
+    #     print(item['classIDx'], item['frame_idx'], item['std_score'])
+
 def get_low_std():
     
     REFERENCE_FILE = r'output\reference_characterization.csv'
-    OUTPUT_FILE = r'keyframe\reference_low_std.csv'
+    OUTPUT_FILE = r'keyframe\reference_high_std.csv'
     df = pd.read_csv(REFERENCE_FILE)
 
     df_index = df.loc[df['std_score'] <= 0.05]
@@ -432,15 +436,21 @@ def check_worst_cases():
     REFERENCE_FILE = r'keyframe\reference_low_std.csv'
     df = pd.read_csv(REFERENCE_FILE) 
    
-    x = np.arange(0., -0.45, -0.005)
+    # x = np.arange(0., -0.45, -0.005)
 
-    for i in x:
-        th = np.round(i, 5)
-        df_index = df.loc[df['min_score'] > th].copy()
-        class_ids = df_index['classIDx'].to_list()
-        df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
-        index_list = df_index['period'].to_list()
-        print(th, len(set(class_ids)), len(set(index_list)))
+    # for i in x:
+    #     th = np.round(i, 5)
+    #     df_index = df.loc[df['min_score'] > th].copy()
+    #     class_ids = df_index['classIDx'].to_list()
+    #     df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
+    #     index_list = df_index['period'].to_list()
+    #     print(th, len(set(class_ids)), len(set(index_list)))
+
+
+    df_index = df.loc[df['max_score'] <= -0.3]
+    for idx, item in df_index.iterrows():
+        print(item['classIDx'], item['frame_idx'], item['max_score'])
+    
 
 def get_worst_valid():
     
@@ -456,7 +466,7 @@ def get_worst_valid():
 
 def check_full_separable():
     
-    REFERENCE_FILE = r'keyframe\reference_worst_valid.csv'
+    REFERENCE_FILE = r'keyframe\reference_low_std.csv'
     df = pd.read_csv(REFERENCE_FILE)    
 
     df_index = df.loc[df['min_score'] > 0.].copy()
@@ -491,24 +501,25 @@ def get_full_separable():
 
     data = data.sort_values(by=['classIDx'], ascending=True)
     
-    data.to_csv(OUTPUT_FILE, index=False, header=True)
+    # data.to_csv(OUTPUT_FILE, index=False, header=True)
    
 
 
 def get_not_full_separable():
     
-    REFERENCE_FILE = r'keyframe\KF_remaining_full_separable.csv'
+    REFERENCE_FILE = r'keyframe\reference_low_std.csv'
     OUTPUT_FILE =  r'keyframe\KF_not_separeble.csv'
     REMAIN_FILE = r'keyframe\KF_remaining_not_separeble.csv'
 
     df = pd.read_csv(REFERENCE_FILE)  
 
-    df_index = df.loc[(df['min_score'] <= 0.) & (df['max_score'] >= 0.)].copy()   
+    df_index = df.loc[(df['min_score'] < 0.) & (df['max_score'] >= 0.)].copy()   
 
     class_ids = df_index['classIDx'].to_list()
     class_lst = set(class_ids)
+    print(len(class_lst), len(df_index))
     df_remained = df[~df.classIDx.isin(class_lst)]
-    print(len(set(df_remained['classIDx'].to_list())))
+    # print(len(set(df_remained['classIDx'].to_list())))
     df_remained.to_csv(REMAIN_FILE, index=False, header=True)
 
     data = pd.DataFrame()
@@ -521,41 +532,89 @@ def get_not_full_separable():
 
     data = data.sort_values(by=['classIDx'], ascending=True)
     
-    data.to_csv(OUTPUT_FILE, index=False, header=True)
+    # data.to_csv(OUTPUT_FILE, index=False, header=True)
 
-    # df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
-    # index_list = df_index['period'].to_list()
-    # df_index.to_csv(OUTPUT_FILE, index=False, header=True)
-    # print(len(set(class_ids)), len(set(index_list)))  
+    df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
+    index_list = df_index['period'].to_list()
+    df_index.to_csv(OUTPUT_FILE, index=False, header=True)
+    print(len(set(class_ids)), len(set(index_list)))  
     # print(set(class_ids))
 
-def get_not_bad():
+def get_not_separable():
+    '''
+    Not separable means low_std (std < alpha) and z_max <= 0 
+
+    '''
     
-    REFERENCE_FILE = r'keyframe\KF_remaining_not_separeble.csv'
-    OUTPUT_FILE =  r'keyframe\KF_not_bad.csv'
+    REFERENCE_FILE = r'keyframe\reference_low_std.csv'
+    OUTPUT_FILE =  r'keyframe\reference_not_separable.csv'
 
-    df = pd.read_csv(REFERENCE_FILE)   
-    df_index = df.loc[df['max_score'] < 0.].copy()
-
-    class_ids = df_index['classIDx'].to_list()
+    df = pd.read_csv(REFERENCE_FILE)
+    class_ids = df['classIDx'].to_list()
     class_lst = set(class_ids)
 
     data = pd.DataFrame()
-
     for class_id in class_lst:
-        df_tmp = df_index.loc[df_index['classIDx'] == class_id].copy()
-        df_rs = df_tmp.loc[df_tmp['min_score'] == df_tmp['min_score'].max()]
-        data = pd.concat([data, df_rs], ignore_index=True)
+        df_tmp = df.loc[df['classIDx'] == class_id].copy()
+        df_ns = df_tmp.loc[df_tmp['max_score'] <= 0.].copy()
+        if(len(df_ns) == 0):
+            mean_avg = 0.
+        else:
+            mean_avg = np.mean(df_ns['mean_score'].to_numpy())
+        # print(mean_avg)
+        df_ns['normalized_mean'] =  np.round(df_ns['mean_score'] - mean_avg, 5)
+        df_ns['mean_new'] =  np.round(mean_avg, 5)
+        df_ns['max_normalized'] =  np.round(df_ns['max_score'] - mean_avg, 5)
+        data = pd.concat([data, df_ns], ignore_index=True)
 
 
-    data = data.sort_values(by=['classIDx'], ascending=True)
-    
+    data = data.sort_values(by=['classIDx'], ascending=True)    
     data.to_csv(OUTPUT_FILE, index=False, header=True)
 
+def plot_not_separable():
+    REFERENCE_FILE = r'keyframe\reference_not_separable.csv'
 
-    # df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
-    # index_list = df_index['period'].to_list()
-    # print(len(set(class_ids)), len(set(index_list)))  
+    df = pd.read_csv(REFERENCE_FILE)
+
+    df_tmp = df.loc[df['max_normalized'] < 0.].copy()
+    class_ids = df_tmp['classIDx'].to_list()
+    class_lst = set(class_ids)
+
+    print(len(df_tmp), len(class_lst))
+
+    score_list = df['max_normalized'].to_numpy()
+
+    x = np.arange(np.min(score_list), np.max(score_list), 0.01)
+
+    data = {}
+    
+    for value in score_list:
+        if value not in data:
+            data[value] = 1
+        else:
+            data[value] += 1
+        
+        
+    # for i in x:
+    #     count = 0
+    #     for value in score_list:
+    #         if value < i:
+    #             count += 1
+    #     data[i] = count   
+
+    data_list = sorted(data.items(), key=lambda x: x[0])
+    # print(data_list)
+
+    # print(data_list)
+    x, y = zip(*data_list)
+
+    plt.plot(x, y)
+    # plt.vlines(x=0, ymin=0, ymax=14000)
+    plt.xlabel("Errors scores")
+    plt.ylabel("Distribution")
+    plt.show()
+
+
 
 def plot_std_worst():
 
@@ -624,7 +683,7 @@ def main():
 
     # plot_mean_std_error()
 
-    plot_error()
+    # plot_error()
 
     # plot_index_error()
 
@@ -640,22 +699,13 @@ def main():
 
     # check_high_std()
 
-    # get_low_std()
+    get_low_std()
 
-    # check_worst_cases()
-
-    # get_worst_valid()
-
-    # check_full_separable()
-
-    # get_full_separable()
+    # get_not_separable()
+    # plot_not_separable()
 
     # get_not_full_separable()
-
-    # get_not_bad()
-
-    # join_KF_files()
-
+    
 
     # plot_std_worst()
 

@@ -4,7 +4,7 @@ import pandas as pd
 
 def main():
     root_path = r"E:\STVD_DL\data\test"
-    output_file = r'data\negative_metadata.csv'
+    output_file = r'data\test_negative_metadata.csv'
     data = []
     for r, d, f in os.walk(root_path):
         for file in f:

@@ -11,11 +11,58 @@ import collections
 from model.model_pooling import EmbeddingNet
 import math
 
-
 from numpy.random import rand
 import matplotlib
 
 import matplotlib.pyplot as plt
+
+
+
+
+x = np.array([-0.5, -0.3, -0.1, -0.5, -0.7, -0.9])
+x_max = np.max(x)
+x_min = np.min(x)
+
+x = (2*(x - x_min)/(x_max - x_min) ) - 1 
+
+print(x)
+
+
+'''
+need to check
+'''
+
+# margin = 2.
+# eps = 1e-6
+# size_average = False
+# output1 = torch.tensor([[0., 1.]])
+# print(output1.shape)
+# output1 = output1 / (torch.norm(output1, p=2, dim=1, keepdim=True) + eps).expand_as(output1)
+# output2 = torch.tensor([[1., 0.]])
+# output2 = output2 / (torch.norm(output2, p=2, dim=1, keepdim=True) + eps).expand_as(output2)
+# target = 0
+# print(output1)
+# print(output2)
+# dif = output2 - output1
+
+# distances = torch.pow(dif + eps, 2).sum(dim=1).sqrt()
+# print("square distance:", distances)
+# cosine_sim = torch.matmul(output1, output2.T)
+# print("cosine:", cosine_sim)
+# losses = 0.5 * target*torch.pow(cosine_sim, 2) + (1 + -1*target) * torch.pow(torch.clamp(margin - cosine_sim, min=0), 2)
+# # losses = 0.5 * target*torch.pow(distances, 2) + 0.5 * (1 - target) * torch.pow(torch.clamp(margin - distances, min=0), 2)
+# losses_2 = 0.5 * target*torch.pow(distances, 2) + (1 + -1*target) * torch.pow(torch.clamp(margin - distances, min=0), 2)
+# print("cosine loss:", losses, "square loss:", losses_2)
+# rs = losses.mean() if size_average else losses.sum()
+# print(rs)
+
+
+
+# train_labels = np.array([1, 2, 1, 2, 1, 2, 3])
+# labels_set = set(train_labels)
+
+# label_to_indices = {label: np.where(train_labels == label)[0] for label in labels_set}
+# print(label_to_indices)
 
 # RES_RESULT = r"KF_one_result.npz"
 # rs_data = np.load(RES_RESULT)
@@ -66,7 +113,7 @@ import matplotlib.pyplot as plt
 # x = np.append(x, [0.])
 # print(x)
 
-# POS_DESC = r'output_setD\rs50_train_descriptor.npz'
+# POS_DESC = r'training_data\siamese_test_descriptor.npz'
 # query = np.load(POS_DESC)
 # rows = len(query['image_ids'])
 # q_image_ids = query['image_ids']
@@ -76,6 +123,8 @@ import matplotlib.pyplot as plt
 # for key in query.keys():
 #     print(key)
 #     print(query[key].shape)
+
+
 # count = 0
 # count_2 = 0
 # for i in range(rows):
