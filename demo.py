@@ -19,13 +19,13 @@ import matplotlib.pyplot as plt
 
 
 
-x = np.array([-0.5, -0.3, -0.1, -0.5, -0.7, -0.9])
-x_max = np.max(x)
-x_min = np.min(x)
+# x = np.array([-0.5, -0.3, -0.1, -0.5, -0.7, -0.9])
+# x_max = np.max(x)
+# x_min = np.min(x)
 
-x = (2*(x - x_min)/(x_max - x_min) ) - 1 
+# x = (2*(x - x_min)/(x_max - x_min) ) - 1 
 
-print(x)
+# print(x)
 
 
 '''
@@ -113,12 +113,47 @@ need to check
 # x = np.append(x, [0.])
 # print(x)
 
-# POS_DESC = r'training_data\siamese_test_descriptor.npz'
-# query = np.load(POS_DESC)
-# rows = len(query['image_ids'])
-# q_image_ids = query['image_ids']
-# q_class_ids = query['class_ids']
-# q_descriptors = query['descriptors']
+POS_DESC = r'iciap_data\KF_pos_test_descriptor.npz'
+query = np.load(POS_DESC)
+rows = len(query['image_ids'])
+q_image_ids = query['image_ids']
+q_class_ids = query['class_ids']
+q_descriptors = query['descriptors']
+
+image_ids = []
+class_ids = []
+descriptors = []
+
+
+for i in range(rows):
+    image_ids.append(q_image_ids[i])
+    class_ids.append(q_class_ids[i])
+    descriptors.append(q_descriptors[i])
+
+NEG_DESC = r'output\neg_test_descriptor.npz'
+
+query = np.load(NEG_DESC)
+rows = len(query['image_ids'])
+q_image_ids = query['image_ids']
+q_class_ids = query['class_ids']
+q_descriptors = query['descriptors']
+
+for i in range(rows):
+    image_ids.append(q_image_ids[i])
+    class_ids.append(q_class_ids[i])
+    descriptors.append(q_descriptors[i])
+
+NEW_FILE = 'iciap_data\KF_FS_test_descriptor.npz'
+
+np.savez(
+        NEW_FILE,
+        image_ids=image_ids,
+        class_ids=class_ids,
+        descriptors=descriptors,
+    )
+
+# KF_FS_test_descriptor
+
 
 # for key in query.keys():
 #     print(key)

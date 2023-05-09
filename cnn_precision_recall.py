@@ -3,9 +3,9 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-# matching_file = r'output\rs50_matching.csv'
+# matching_file = r'iciap_data\rs50_matching.csv'
 
-matching_file = r'training_data\siamese_matching.csv'
+matching_file = r'iciap_data\KF_FS_matching.csv'
 
 def plot_precision_recall_curve():
     df = pd.read_csv(matching_file)
@@ -56,7 +56,7 @@ def plot_precision_recall_curve():
         Recall.append(rec)
         F1_score.append((2*pre*rec) / (pre + rec))
 
-        print(np.round(th,3), TP, FP, FN)
+        print(np.round(th,3), TP, FP, TN, FN, F1_score)
 
 
     # #create precision recall curve

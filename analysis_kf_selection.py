@@ -422,7 +422,7 @@ def check_high_std():
 def get_low_std():
     
     REFERENCE_FILE = r'output\reference_characterization.csv'
-    OUTPUT_FILE = r'keyframe\reference_high_std.csv'
+    OUTPUT_FILE = r'keyframe\reference_low_std.csv'
     df = pd.read_csv(REFERENCE_FILE)
 
     df_index = df.loc[df['std_score'] <= 0.05]
@@ -467,9 +467,12 @@ def get_worst_valid():
 def check_full_separable():
     
     REFERENCE_FILE = r'keyframe\reference_low_std.csv'
+    OUTPUT_FILE = r'iciap_data\KF_full_separable.csv'
     df = pd.read_csv(REFERENCE_FILE)    
 
     df_index = df.loc[df['min_score'] > 0.].copy()
+    df_index.to_csv(OUTPUT_FILE, index=False, header=True)
+
     class_ids = df_index['classIDx'].to_list()
     df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
     index_list = df_index['period'].to_list()
@@ -554,6 +557,8 @@ def get_not_separable():
     class_lst = set(class_ids)
 
     data = pd.DataFrame()
+
+    mean_lst = []
     for class_id in class_lst:
         df_tmp = df.loc[df['classIDx'] == class_id].copy()
         df_ns = df_tmp.loc[df_tmp['max_score'] <= 0.].copy()
@@ -564,19 +569,34 @@ def get_not_separable():
         # print(mean_avg)
         df_ns['normalized_mean'] =  np.round(df_ns['mean_score'] - mean_avg, 5)
         df_ns['mean_new'] =  np.round(mean_avg, 5)
+        mean_lst.append(np.round(mean_avg, 5))
         df_ns['max_normalized'] =  np.round(df_ns['max_score'] - mean_avg, 5)
         data = pd.concat([data, df_ns], ignore_index=True)
 
+    mean_lst.sort()
+    mean_lst = mean_lst[:-5]
+    print(mean_lst)
+    print(np.min(mean_lst), np.max(mean_lst))
+
+    x = np.arange(0, len(mean_lst), 1)
+    plt.plot(x, mean_lst)
+    plt.show()
 
     data = data.sort_values(by=['classIDx'], ascending=True)    
-    data.to_csv(OUTPUT_FILE, index=False, header=True)
+    # data.to_csv(OUTPUT_FILE, index=False, header=True)
 
 def plot_not_separable():
     REFERENCE_FILE = r'keyframe\reference_not_separable.csv'
+    OUTPUT_FILE =  r'keyframe\KF_NS.csv'
 
     df = pd.read_csv(REFERENCE_FILE)
 
-    df_tmp = df.loc[df['max_normalized'] < 0.].copy()
+    # df_tmp = df.loc[df['max_normalized'] < 0.].copy()
+
+    df_tmp = df.loc[df['max_normalized'] >= 0.].copy()
+    # print(len(df_tmp))
+    # df_tmp.to_csv(OUTPUT_FILE, index=False, header=True)
+
     class_ids = df_tmp['classIDx'].to_list()
     class_lst = set(class_ids)
 
@@ -699,10 +719,11 @@ def main():
 
     # check_high_std()
 
-    get_low_std()
+    # get_low_std()
 
+    # check_full_separable()
     # get_not_separable()
-    # plot_not_separable()
+    plot_not_separable()
 
     # get_not_full_separable()
     

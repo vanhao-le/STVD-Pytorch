@@ -3,8 +3,9 @@ import pandas as pd
 
 def extract_training_descriptor():
 
-    KF_FILE = r'keyframe\KF_one_per_reference.csv'
-    NEW_FILE = r'training_data\train_descriptor.npz'
+    KF_FILE = r'iciap_data\KF_NS.csv'
+
+    NEW_FILE = r'iciap_data\KF_NS_train_descriptor.npz'
 
 
     POS_DESC = r'output\pos_train_descriptor.npz'
@@ -21,10 +22,11 @@ def extract_training_descriptor():
     df = pd.read_csv(KF_FILE)
     print(rows)
     # df['period'] = df.classIDx.astype(str) + "-" + df.image_name.astype(str)
-    for i in range(rows):
-        for idx, item in df.iterrows():
-            r_classIDx = int(item['classIDx'])
-            r_frameIDx = int(item['frame_idx'])
+
+    for idx, item in df.iterrows():
+        r_classIDx = int(item['classIDx'])
+        r_frameIDx = int(item['frame_idx'])
+        for i in range(rows): 
             q_frameIDx = int(str(q_image_ids[i]).split('_')[-1])
             q_classIDx = int(q_class_ids[i])
             if r_classIDx == q_classIDx and r_frameIDx == q_frameIDx:            
@@ -34,19 +36,19 @@ def extract_training_descriptor():
     
     print(len(image_ids))
 
-    # NEG_DESC = r'output\neg_train_descriptor.npz'
-    # query = np.load(NEG_DESC)
-    # rows = len(query['image_ids'])
-    # q_image_ids = query['image_ids']
-    # q_class_ids = query['class_ids']
-    # q_descriptors = query['descriptors']
+    NEG_DESC = r'output\neg_train_descriptor.npz'
+    query = np.load(NEG_DESC)
+    rows = len(query['image_ids'])
+    q_image_ids = query['image_ids']
+    q_class_ids = query['class_ids']
+    q_descriptors = query['descriptors']
 
-    # for i in range(rows):
-    #     image_ids.append(q_image_ids[i])
-    #     class_ids.append(q_class_ids[i])
-    #     descriptors.append(q_descriptors[i])
+    for i in range(rows):
+        image_ids.append(q_image_ids[i])
+        class_ids.append(q_class_ids[i])
+        descriptors.append(q_descriptors[i])
 
-    # print(len(image_ids))
+    print(len(image_ids))
     
     np.savez(
         NEW_FILE,
@@ -59,11 +61,11 @@ def extract_training_descriptor():
 
 def extract_testing_descriptor():
 
-    KF_FILE = r'keyframe\KF_one_per_reference.csv'
-
-    NEW_FILE = r'training_data\test_descriptor.npz'
+    KF_FILE = r'iciap_data\KF_NS.csv'
+    NEW_FILE = r'iciap_data\KF_NS_test_descriptor.npz'    
 
     POS_DESC = r'output\pos_test_descriptor.npz'
+
     query = np.load(POS_DESC)
     rows = len(query['image_ids'])
     q_image_ids = query['image_ids']
@@ -95,33 +97,33 @@ def extract_testing_descriptor():
         
         # print("class:", r_classIDx, "len:", count)
     
-    
-    for i in range(rows):
-        for idx, item in df.iterrows():
-            r_classIDx = int(item['classIDx'])
-            r_frameIDx = int(item['frame_idx'])
+    for idx, item in df.iterrows():
+        r_classIDx = int(item['classIDx'])
+        r_frameIDx = int(item['frame_idx'])
+        for i in range(rows): 
             q_frameIDx = int(str(q_image_ids[i]).split('_')[-1])
             q_classIDx = int(q_class_ids[i])
             if r_classIDx == q_classIDx and r_frameIDx == q_frameIDx:            
                 image_ids.append(q_image_ids[i])
                 class_ids.append(q_class_ids[i])
-                descriptors.append(q_descriptors[i])
+                descriptors.append(q_descriptors[i])    
+    
     
     print(len(image_ids))
 
-    # NEG_DESC = r'output\neg_test_descriptor.npz'
-    # query = np.load(NEG_DESC)
-    # rows = len(query['image_ids'])
-    # q_image_ids = query['image_ids']
-    # q_class_ids = query['class_ids']
-    # q_descriptors = query['descriptors']
+    NEG_DESC = r'output\neg_test_descriptor.npz'
+    query = np.load(NEG_DESC)
+    rows = len(query['image_ids'])
+    q_image_ids = query['image_ids']
+    q_class_ids = query['class_ids']
+    q_descriptors = query['descriptors']
 
-    # for i in range(rows):
-    #     image_ids.append(q_image_ids[i])
-    #     class_ids.append(q_class_ids[i])
-    #     descriptors.append(q_descriptors[i])
+    for i in range(rows):
+        image_ids.append(q_image_ids[i])
+        class_ids.append(q_class_ids[i])
+        descriptors.append(q_descriptors[i])
 
-    # print(len(image_ids))
+    print(len(image_ids))
     
     np.savez(
         NEW_FILE,
@@ -206,7 +208,7 @@ def extract_val_descriptor():
 def main():
     extract_training_descriptor()
     extract_testing_descriptor()
-    extract_val_descriptor()
+    # extract_val_descriptor()
 
 if __name__ == '__main__':
     main()

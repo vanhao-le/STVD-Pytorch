@@ -86,31 +86,59 @@ PEAKED_3 = r'output\peaked_train_matching_3.csv'
 
 
 
-KF_FILE = r'output\keyframe_train_selection.csv'
+# KF_FILE = r'output\keyframe_train_selection.csv'
 
-df = pd.read_csv(KF_FILE)
-data = {}
-count = 0
-for idx, item in df.iterrows():
-    classIDx = item['classIDx']
-    str_frame_lst = str(item['frame_idx'])
-    frame_lst = np.fromstring(str_frame_lst[1:-1], dtype=np.int, sep=',')
-    # print(classIDx, "-", frame_lst)
-    frame_len = len(frame_lst)
-    data[classIDx] = frame_len
+# df = pd.read_csv(KF_FILE)
+# data = {}
+# count = 0
+# for idx, item in df.iterrows():
+#     classIDx = item['classIDx']
+#     str_frame_lst = str(item['frame_idx'])
+#     frame_lst = np.fromstring(str_frame_lst[1:-1], dtype=np.int, sep=',')
+#     # print(classIDx, "-", frame_lst)
+#     frame_len = len(frame_lst)
+#     data[classIDx] = frame_len
 
-    # count += 1
-    # if count > 2:
-    #     break
+#     # count += 1
+#     # if count > 2:
+#     #     break
 
-data_list = sorted(data.items())
 
-print(data_list)
-x, y = zip(*data_list)
+REFERENCE_FILE = r'keyframe\reference_low_std.csv'
+df = pd.read_csv(REFERENCE_FILE)
+class_ids = df['classIDx'].to_list()
+class_lst = set(class_ids)
 
-plt.plot(x, y)
-plt.xlabel("Number of references")
-plt.ylabel("Number of frames")
+data = pd.DataFrame()
+
+mean_lst = []
+class_id = 1
+df_tmp = df.loc[df['classIDx'] == class_id].copy()
+df_ns = df_tmp.loc[df_tmp['max_score'] <= 0.].copy()
+if(len(df_ns) == 0):
+    mean_avg = 0.
+else:
+    mean_avg = np.mean(df_ns['mean_score'].to_numpy())
+# print(mean_avg)
+df_ns['normalized_mean'] =  np.round(df_ns['mean_score'] - mean_avg, 5)
+df_ns['mean_new'] =  np.round(mean_avg, 5)
+mean_lst.append(np.round(mean_avg, 5))
+df_ns['max_normalized'] =  np.round(df_ns['max_score'] - mean_avg, 5)
+df_ns['min_normalized'] =  np.round(df_ns['min_score'] - mean_avg, 5)
+data = pd.concat([data, df_ns], ignore_index=True)
+
+N = len(df_ns)
+print(N)
+x = np.arange(0, N, 1)
+y1 = df_ns['max_normalized'].to_numpy()
+y2 = df_ns['min_normalized'].to_numpy()
+
+
+plt.plot(x, y1)
+plt.plot(x, y2)
+plt.hlines(y=0, xmin=0, xmax=N, colors='red')
+plt.xlabel("Indices")
+plt.ylabel("Errors")
 plt.show()
 
 
