@@ -17,7 +17,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 
+my_str = "c02_20210201185459_9_64"
 
+print(my_str.rsplit('_', 1)[0])
 
 # x = np.array([-0.5, -0.3, -0.1, -0.5, -0.7, -0.9])
 # x_max = np.max(x)
@@ -31,16 +33,36 @@ import matplotlib.pyplot as plt
 '''
 need to check
 '''
+# eps = 1e-6
+# def cos(A, B): 
+#     return (A*B).sum(axis=1) / (A*A).sum(axis=1) ** .5 / (B*B).sum(axis=1) ** .5
 
-# margin = 2.
+# output1 = torch.rand(2,2048)
+# output1 = torch.tensor([[0., 1.], [0., 1.]])
+# output1 = output1 / (torch.norm(output1, p=2, dim=1, keepdim=True) + eps).expand_as(output1)
+# output2 = torch.rand(2,2048)
+# output2 = torch.tensor([[1., 0.], [0., 1.]])
+# output2 = output2 / (torch.norm(output2, p=2, dim=1, keepdim=True) + eps).expand_as(output2)
+# # e_dim = F.pairwise_distance(output1, output2)
+# # print(e_dim.shape)
+# # print(output1.shape, output1)
+# # print(output2.shape, output2)
+# print(torch.mul(output1, output2).sum(1))
+# c_sim = torch.matmul(output1, output2.T).sum(0)
+# print(c_sim.shape)
+
+# print(e_dim)
+# print(c_sim)
+
+# margin = 1.
 # eps = 1e-6
 # size_average = False
 # output1 = torch.tensor([[0., 1.]])
 # print(output1.shape)
 # output1 = output1 / (torch.norm(output1, p=2, dim=1, keepdim=True) + eps).expand_as(output1)
-# output2 = torch.tensor([[1., 0.]])
+# output2 = torch.tensor([[0., 1.]])
 # output2 = output2 / (torch.norm(output2, p=2, dim=1, keepdim=True) + eps).expand_as(output2)
-# target = 0
+# target = 1
 # print(output1)
 # print(output2)
 # dif = output2 - output1
@@ -51,10 +73,10 @@ need to check
 # print("cosine:", cosine_sim)
 # losses = 0.5 * target*torch.pow(cosine_sim, 2) + (1 + -1*target) * torch.pow(torch.clamp(margin - cosine_sim, min=0), 2)
 # # losses = 0.5 * target*torch.pow(distances, 2) + 0.5 * (1 - target) * torch.pow(torch.clamp(margin - distances, min=0), 2)
-# losses_2 = 0.5 * target*torch.pow(distances, 2) + (1 + -1*target) * torch.pow(torch.clamp(margin - distances, min=0), 2)
-# print("cosine loss:", losses, "square loss:", losses_2)
+# losses_2 = target*(1 - cosine_sim) + (1-target)*(margin - 1 + cosine_sim)
+# print("cosine loss:", losses_2, "square loss:", losses)
 # rs = losses.mean() if size_average else losses.sum()
-# print(rs)
+# # print(rs)
 
 
 
@@ -113,44 +135,44 @@ need to check
 # x = np.append(x, [0.])
 # print(x)
 
-POS_DESC = r'iciap_data\KF_pos_test_descriptor.npz'
-query = np.load(POS_DESC)
-rows = len(query['image_ids'])
-q_image_ids = query['image_ids']
-q_class_ids = query['class_ids']
-q_descriptors = query['descriptors']
+# POS_DESC = r'iciap_data\KF_pos_test_descriptor.npz'
+# query = np.load(POS_DESC)
+# rows = len(query['image_ids'])
+# q_image_ids = query['image_ids']
+# q_class_ids = query['class_ids']
+# q_descriptors = query['descriptors']
 
-image_ids = []
-class_ids = []
-descriptors = []
+# image_ids = []
+# class_ids = []
+# descriptors = []
 
 
-for i in range(rows):
-    image_ids.append(q_image_ids[i])
-    class_ids.append(q_class_ids[i])
-    descriptors.append(q_descriptors[i])
+# for i in range(rows):
+#     image_ids.append(q_image_ids[i])
+#     class_ids.append(q_class_ids[i])
+#     descriptors.append(q_descriptors[i])
 
-NEG_DESC = r'output\neg_test_descriptor.npz'
+# NEG_DESC = r'output\neg_test_descriptor.npz'
 
-query = np.load(NEG_DESC)
-rows = len(query['image_ids'])
-q_image_ids = query['image_ids']
-q_class_ids = query['class_ids']
-q_descriptors = query['descriptors']
+# query = np.load(NEG_DESC)
+# rows = len(query['image_ids'])
+# q_image_ids = query['image_ids']
+# q_class_ids = query['class_ids']
+# q_descriptors = query['descriptors']
 
-for i in range(rows):
-    image_ids.append(q_image_ids[i])
-    class_ids.append(q_class_ids[i])
-    descriptors.append(q_descriptors[i])
+# for i in range(rows):
+#     image_ids.append(q_image_ids[i])
+#     class_ids.append(q_class_ids[i])
+#     descriptors.append(q_descriptors[i])
 
-NEW_FILE = 'iciap_data\KF_FS_test_descriptor.npz'
+# NEW_FILE = 'iciap_data\KF_FS_test_descriptor.npz'
 
-np.savez(
-        NEW_FILE,
-        image_ids=image_ids,
-        class_ids=class_ids,
-        descriptors=descriptors,
-    )
+# np.savez(
+#         NEW_FILE,
+#         image_ids=image_ids,
+#         class_ids=class_ids,
+#         descriptors=descriptors,
+#     )
 
 # KF_FS_test_descriptor
 
@@ -335,7 +357,7 @@ np.savez(
 # c = torch.matmul(a,b.T)
 # print(c)
 
-# OUTPUT_FILE = r'output\pos_train_descriptor.npz'
+# OUTPUT_FILE = r'output\neg_train_descriptor.npz'
 # data = np.load(OUTPUT_FILE)
 
 
@@ -343,17 +365,21 @@ np.savez(
 # c_ids = data['class_ids']
 # d_cl =  data['descriptors']
 
-# # num_record = len(i_s)
-
+# num_record = len(i_s)
+# count = 0
 # for key in data.keys():
-#     # print(key)
+#     print(key)
 #     print(data[key].shape)
 
-# image_ids = []
-# class_ids = []
-# descriptors = []
+# # image_ids = []
+# # class_ids = []
+# # descriptors = []
 
 # for i in range(num_record):
+#     if c_ids[i] < 243:
+#         count += 1
+
+# print("Positive", count)
 #     # print(image_ids[i], class_ids[i], descriptors[i].shape)    
 #     if (c_ids[i] != 243):
 #         image_ids.append(i_s[i])

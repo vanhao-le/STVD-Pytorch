@@ -15,17 +15,25 @@ class ContrastiveLoss(nn.Module):
         self.eps = 1e-6
 
     def forward(self, output1, output2, target, size_average=True):
-        # distances = (output2 - output1).pow(2).sum(1)  # squared distances        
-        # losses = 0.5 * (target.float() * distances +
-        #                 (1 + -1 * target).float() * F.relu(self.margin - (distances + self.eps).sqrt()).pow(2))
-        dif = output2 - output1
-        distances = torch.pow(dif + self.eps, 2).sum(dim=1).sqrt()
 
-        # losses = 0.5 * target*torch.pow(distances, 2) + 0.5 * (1 - target) * torch.pow(torch.clamp(self.margin - distances, min=0), 2)
-        losses = 0.5 * target*torch.pow(distances, 2) + (1 + -1 * target) * torch.pow(torch.clamp(self.margin - distances, min=0), 2)
-            
-        return losses.mean() if size_average else losses.sum()
+       
+        # print(losses.shape)
+        # print(losses)      
+        # output1, output2 = #batch_size,#dim_vector (64, 2048) 
 
+
+        cosine_sim = torch.mul(output1, output2).sum(1)
+        # print(cosine_sim.shape)
+
+        # cosine_sim = #batch_size,#batch_size (64,64)
+        # print(cosine_sim)
+
+        # losses = target.float()*torch.pow((1. - cosine_sim), 2) + ((1+-1*target).float())* torch.pow((self.eps + cosine_sim),2)
+
+        losses = 0.5* ((1 - target.float()) * torch.pow(cosine_sim, 2) + (target.float()) * torch.pow(torch.clamp(self.margin - cosine_sim, min=0.0), 2))       
+
+        # return losses.mean() if size_average else losses.sum()
+        return losses.sum()
 
 class TripletLoss(nn.Module):
     """

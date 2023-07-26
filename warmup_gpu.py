@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import time
 
-def run(iters=100000):
+def run(iters=10000):
     
     device = "cuda:0"
 

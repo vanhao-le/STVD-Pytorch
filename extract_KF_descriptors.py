@@ -3,9 +3,9 @@ import pandas as pd
 
 def extract_training_descriptor():
 
-    KF_FILE = r'iciap_data\KF_NS.csv'
+    KF_FILE = r'iciap_data\KF_Worst.csv'
 
-    NEW_FILE = r'iciap_data\KF_NS_train_descriptor.npz'
+    NEW_FILE = r'iciap_data\KF_Worst_train_descriptor.npz'
 
 
     POS_DESC = r'output\pos_train_descriptor.npz'
@@ -61,8 +61,8 @@ def extract_training_descriptor():
 
 def extract_testing_descriptor():
 
-    KF_FILE = r'iciap_data\KF_NS.csv'
-    NEW_FILE = r'iciap_data\KF_NS_test_descriptor.npz'    
+    KF_FILE = r'iciap_data\KF_Worst.csv'
+    NEW_FILE = r'iciap_data\KF_Worst_test_descriptor.npz'    
 
     POS_DESC = r'output\pos_test_descriptor.npz'
 

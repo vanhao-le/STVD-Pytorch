@@ -4,7 +4,7 @@ import time
 import pandas as pd
 
 
-QUERY_DESC = r'iciap_data\KF_NS_test_descriptor.npz'
+QUERY_DESC = r'output_pooling\MAC_ggl_test_descriptor.npz'
 query = np.load(QUERY_DESC)
 rows = len(query['image_ids'])
 q_image_ids = query['image_ids']
@@ -12,7 +12,7 @@ q_class_ids = query['class_ids']
 q_descriptors = query['descriptors']
 
 
-REF_DESC = r'iciap_data\KF_NS_train_descriptor.npz'
+REF_DESC = r'output_pooling\MAC_ggl_train_descriptor.npz'
 reference = np.load(REF_DESC)
 cols = len(reference['image_ids'])
 r_image_ids = reference['image_ids']
@@ -25,7 +25,7 @@ device = "cuda:0"
 tensor_r_descriptors = torch.from_numpy(r_descriptors)
 tensor_r_descriptors = tensor_r_descriptors.to(device)
 
-ouput_csv = r"iciap_data\KF_NS_matching.csv"
+ouput_csv = r"output_pooling\MAC_ggl_matching.csv"
 
 if __name__ == '__main__':
     print("[INFO] starting .........")

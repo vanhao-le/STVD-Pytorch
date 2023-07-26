@@ -7,17 +7,17 @@ import matplotlib.font_manager as font_manager
 def cnn_plot():
     
     font_path = r"C:\Windows\Fonts\times.ttf"
-    font_prop = font_manager.FontProperties(fname=font_path, size=14)
-    font_prop_lable = font_manager.FontProperties(fname=font_path, size=16)
+    font_prop = font_manager.FontProperties(fname=font_path, size=16)
+    font_prop_lable = font_manager.FontProperties(fname=font_path, size=15)
     font_prop_legend = font_manager.FontProperties(fname=font_path, size=13)
     
-    VGG_RESULT = r"iciap_data\vgg16_result.npz"
-    RES_RESULT = r"iciap_data\rs50_result.npz"
-    GGL_RESULT = r"iciap_data\ggl_result.npz"
-    MAC_RS50 = r"iciap_data\MAC_rs50_result.npz"
-    MAC_VGG = r"iciap_data\MAC_vgg16_result.npz"
-    RMAC_RS50 = r"iciap_data\RMAC_rs50_result.npz"
-    RMAC_VGG = r"iciap_data\RMAC_vgg16_result.npz"
+    VGG_RESULT = r"iciap_plots\vgg16_result.npz"
+    RES_RESULT = r"iciap_plots\rs50_result.npz"
+    GGL_RESULT = r"iciap_plots\ggl_result.npz"
+    MAC_RS50 = r"iciap_plots\MAC_rs50_result.npz"
+    MAC_VGG = r"iciap_plots\MAC_vgg16_result.npz"
+    RMAC_RS50 = r"iciap_plots\RMAC_rs50_result.npz"
+    RMAC_VGG = r"iciap_plots\RMAC_vgg16_result.npz"
 
     vgg_data = np.load(VGG_RESULT)
     vgg_threshold = vgg_data['threshold']
@@ -65,10 +65,11 @@ def cnn_plot():
     
     # add axis labels to plot    
     ax1.set_ylabel('$F_1$ scores', fontproperties=font_prop_lable)
-    ax1.set_xlabel('Thresholds \n (a)', fontproperties=font_prop_lable)    
+    ax1.set_xlabel('Threshold \n (a)', fontproperties=font_prop_lable)    
  
-    ax1.set_xlim(0.75, 1.)
-    ax1.set_ylim(0., 1.0)
+    # ax1.set_xlim(0.75, 1.)
+    # ax1.set_xlim(0., 1.)
+    # ax1.set_ylim(0., 1.0)
 
     for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
         label.set_fontproperties(font_prop)
@@ -76,24 +77,21 @@ def cnn_plot():
      
     ax1.grid(which='major', linestyle='--')
 
-    marker_size= 5
-    markevery = 0.1
+    # marker_size= 5
+    # markevery = 0.1
 
-    ax2.plot(rs_threshold, rs_f1, color='black', label="ResNet-50-v1 (Last FC)", linestyle='-', marker='.', ms=marker_size, markevery=markevery)
-    ax2.plot(vgg_threshold, vgg_f1, color='black', label="VGG-16 (Last FC)", linestyle='--', marker='.', ms=marker_size, markevery=markevery)
-
-    ax2.plot(mac_rs_threshold, mac_rs_f1, color='black', label="ResNet-50-v1 (MAC)", linestyle='-', marker='>', ms=marker_size, markevery=markevery)
-    ax2.plot(mac_vgg_threshold, mac_vgg_f1, color='black', label="VGG-16 (MAC)", linestyle='--', marker='>', ms=marker_size, markevery=markevery)
-
-    ax2.plot(rmac_rs_threshold, rmac_rs_f1, color='black', label="ResNet-50-v1 (R-MAC)", linestyle='-', marker='*', ms=marker_size, markevery=markevery)
-    ax2.plot(rmac_vgg_threshold, rmac_vgg_f1, color='black', label="VGG-16 (R-MAC)", linestyle='--', marker='*', ms=marker_size, markevery=markevery)
+    ax2.plot(rs_recall, rs_precision, color = "black", label="ResNet-50-v1 (Last FC)", linestyle='-')
+    ax2.plot(ggl_recall, ggl_precision, color='black', label="Inception-v1 (Last FC)", linestyle='-.')
+    ax2.plot(vgg_recall, vgg_precision, color='black', label="VGG-16 (Last FC)", linestyle='--')
+    
     
     # add axis labels to plot    
-    ax2.set_ylabel('$F_1$ scores', fontproperties=font_prop_lable)
-    ax2.set_xlabel('Thresholds \n (b)', fontproperties=font_prop_lable)    
+    ax2.set_ylabel('Precision', fontproperties=font_prop_lable)
+    ax2.set_xlabel('Recall \n (b)', fontproperties=font_prop_lable)    
  
-    ax2.set_xlim(0.75, 1.)
-    ax2.set_ylim(0., 1.0)
+    # ax2.set_xlim(0.75, 1.)
+    # ax2.set_xlim(0., 1.)
+    ax2.set_ylim(0.95, 1.0)
 
     for label in (ax2.get_xticklabels() + ax2.get_yticklabels()):
         label.set_fontproperties(font_prop)
@@ -246,12 +244,197 @@ def high_std_plot():
     plt.legend(loc="upper right")
     plt.show()
 
+
+def keyframe_plot():
+    
+    font_path = r"C:\Windows\Fonts\times.ttf"
+    font_prop = font_manager.FontProperties(fname=font_path, size=14)
+    font_prop_lable = font_manager.FontProperties(fname=font_path, size=16)
+    font_prop_legend = font_manager.FontProperties(fname=font_path, size=13)
+    
+    FS_RESULT = r"iciap_plots\KF_FS_result.npz"
+    W_RESULT = r"iciap_plots\KF_Worst_result.npz"
+    NC_RESULT = r"iciap_plots\KF_NC_result.npz"
+    
+
+    fs_data = np.load(FS_RESULT)
+    fs_threshold = fs_data['threshold']
+    fs_precision = fs_data['precision']
+    fs_recall = fs_data['recall']
+    fs_f1 = fs_data['F1_score']
+
+    w_data = np.load(W_RESULT)
+    w_threshold = w_data['threshold']
+    w_precision = w_data['precision']
+    w_recall = w_data['recall']
+    w_f1 = w_data['F1_score']
+
+
+    nc_data = np.load(NC_RESULT)
+    nc_threshold = nc_data['threshold']
+    nc_precision = nc_data['precision']
+    nc_recall = nc_data['recall']
+    nc_f1 = nc_data['F1_score']
+
+   
+
+    # #create precision recall curve
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+
+    
+    ax1.plot(fs_recall, fs_precision, color = "black", label="Full separable", linestyle='-')
+    ax1.plot(nc_recall, nc_precision, color='black', label="Not consitent", linestyle='-.')
+    ax1.plot(w_recall, w_precision, color='black', label="Worst", linestyle='--')
+    
+    # add axis labels to plot    
+    ax1.set_ylabel('Precision', fontproperties=font_prop_lable)
+    ax1.set_xlabel('Recall \n (a)', fontproperties=font_prop_lable)    
+ 
+    # ax1.set_xlim(0.75, 1.)
+    # ax1.set_xlim(0., 1.)
+    # ax1.set_ylim(0., 1.0)
+
+    for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
+        label.set_fontproperties(font_prop)
+    ax1.legend(loc="lower left", prop=font_prop_legend)
+     
+    ax1.grid(which='major', linestyle='--')
+
+    marker_size= 5
+    markevery = 0.1
+
+    ax2.plot(fs_threshold, fs_f1, color='black', label="Full separable", linestyle='-')
+    ax2.plot(nc_threshold, nc_f1, color='black', label="Not consitent", linestyle='-.' )
+    ax2.plot(w_threshold, w_f1, color='black', label="Worst", linestyle='--')
+    
+    # add axis labels to plot    
+    ax2.set_ylabel('$F_1$ scores', fontproperties=font_prop_lable)
+    ax2.set_xlabel('Thresholds \n (b)', fontproperties=font_prop_lable)    
+ 
+    # ax2.set_xlim(0.75, 1.)
+    # ax2.set_xlim(0., 1.)
+    # ax2.set_ylim(0., 1.0)
+
+    for label in (ax2.get_xticklabels() + ax2.get_yticklabels()):
+        label.set_fontproperties(font_prop)
+    ax2.legend(loc="lower left", prop=font_prop_legend)
+     
+    ax2.grid(which='major', linestyle='--')
+
+    #display plot
+    plt.show()
+
+def cnn_plot_comparision():
+    
+    font_path = r"C:\Windows\Fonts\times.ttf"
+    font_prop = font_manager.FontProperties(fname=font_path, size=14)
+    font_prop_lable = font_manager.FontProperties(fname=font_path, size=16)
+    font_prop_legend = font_manager.FontProperties(fname=font_path, size=13)
+    
+    VGG_RESULT = r"caip_plots\vgg16_result.npz"
+    RES_RESULT = r"caip_plots\rs50_result.npz"
+    GGL_RESULT = r"caip_plots\ggl_result.npz"
+    MAC_RS50 = r"caip_plots\MAC_rs50_result.npz"
+    MAC_VGG = r"caip_plots\MAC_vgg16_result.npz"
+    MAC_GGL = r"caip_plots\MAC_ggl_result.npz"
+    RMAC_RS50 = r"caip_plots\RMAC_rs50_result.npz"
+    RMAC_VGG = r"caip_plots\RMAC_vgg16_result.npz"
+    RMAC_GGL = r"caip_plots\RMAC_ggl_result.npz"
+
+    vgg_data = np.load(VGG_RESULT)
+    vgg_threshold = vgg_data['threshold']
+    vgg_precision = vgg_data['precision']
+    vgg_recall = vgg_data['recall']
+    vgg_f1 = vgg_data['F1_score']
+
+    rs_data = np.load(RES_RESULT)
+    rs_threshold = rs_data['threshold']
+    rs_precision = rs_data['precision']
+    rs_recall = rs_data['recall']
+    rs_f1 = rs_data['F1_score']
+
+
+    ggl_data = np.load(GGL_RESULT)
+    ggl_threshold = ggl_data['threshold']
+    ggl_precision = ggl_data['precision']
+    ggl_recall = ggl_data['recall']
+    ggl_f1 = ggl_data['F1_score']
+
+    mac_rs = np.load(MAC_RS50)
+    mac_rs_threshold = mac_rs['threshold']
+    mac_rs_f1 = mac_rs['F1_score']
+
+    mac_vgg = np.load(MAC_VGG)
+    mac_vgg_threshold = mac_vgg['threshold']
+    mac_vgg_f1 = mac_vgg['F1_score']
+
+
+    rmac_rs = np.load(RMAC_RS50)
+    rmac_rs_threshold = rmac_rs['threshold']
+    rmac_rs_f1 = rmac_rs['F1_score']
+
+    rmac_vgg = np.load(RMAC_VGG)
+    rmac_vgg_threshold = rmac_vgg['threshold']
+    rmac_vgg_f1 = rmac_vgg['F1_score']
+
+    # #create precision recall curve
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+
+    
+    ax1.plot(rs_threshold, rs_f1, color = "black", label="ResNet-50-v1 (Last FC)", linestyle='-')
+    ax1.plot(ggl_threshold, ggl_f1, color='black', label="Inception-v3 (Last FC)", linestyle='-.')
+    ax1.plot(vgg_threshold, vgg_f1, color='black', label="VGG-16 (Last FC)", linestyle='--')
+    
+    # add axis labels to plot    
+    ax1.set_ylabel('$F_1$ scores', fontproperties=font_prop_lable)
+    ax1.set_xlabel('Thresholds \n (a)', fontproperties=font_prop_lable)    
+ 
+    ax1.set_xlim(0.75, 1.)
+    ax1.set_ylim(0., 1.0)
+
+    for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
+        label.set_fontproperties(font_prop)
+    ax1.legend(loc="lower left", prop=font_prop_legend)
+     
+    ax1.grid(which='major', linestyle='--')
+
+    marker_size= 5
+    markevery = 0.1
+
+    ax2.plot(rs_threshold, rs_f1, color='black', label="ResNet-50-v1 (Last FC)", linestyle='-', marker='.', ms=marker_size, markevery=markevery)
+    ax2.plot(vgg_threshold, vgg_f1, color='black', label="VGG-16 (Last FC)", linestyle='--', marker='.', ms=marker_size, markevery=markevery)
+
+    ax2.plot(mac_rs_threshold, mac_rs_f1, color='black', label="ResNet-50-v1 (MAC)", linestyle='-', marker='>', ms=marker_size, markevery=markevery)
+    ax2.plot(mac_vgg_threshold, mac_vgg_f1, color='black', label="VGG-16 (MAC)", linestyle='--', marker='>', ms=marker_size, markevery=markevery)
+
+    ax2.plot(rmac_rs_threshold, rmac_rs_f1, color='black', label="ResNet-50-v1 (R-MAC)", linestyle='-', marker='*', ms=marker_size, markevery=markevery)
+    ax2.plot(rmac_vgg_threshold, rmac_vgg_f1, color='black', label="VGG-16 (R-MAC)", linestyle='--', marker='*', ms=marker_size, markevery=markevery)
+    
+    # add axis labels to plot    
+    ax2.set_ylabel('$F_1$ scores', fontproperties=font_prop_lable)
+    ax2.set_xlabel('Thresholds \n (b)', fontproperties=font_prop_lable)    
+ 
+    ax2.set_xlim(0.75, 1.)
+    ax2.set_ylim(0., 1.0)
+
+    for label in (ax2.get_xticklabels() + ax2.get_yticklabels()):
+        label.set_fontproperties(font_prop)
+    ax2.legend(loc="lower left", prop=font_prop_legend)
+     
+    ax2.grid(which='major', linestyle='--')
+
+    #display plot
+    plt.show()
+
 def main():
 
+    cnn_plot_comparision()
     # cnn_plot()
 
+    # keyframe_plot()
 
-    criterion_plot()
+
+    # criterion_plot()
 
    
 

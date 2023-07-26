@@ -403,19 +403,26 @@ def analysic_error():
 def check_high_std():
 
     REFERENCE_FILE = r'output\reference_characterization.csv'
+    OUTPUT_FILE = r'keyframe\KF_NC.csv'
     df = pd.read_csv(REFERENCE_FILE)
 
     x = np.arange(0., 0.13, 0.001)
 
-    for i in x:
-        th = np.round(i, 5)
-        df_index = df.loc[df['std_score'] < th].copy()
-        class_ids = df_index['classIDx'].to_list()
-        df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
-        index_list = df_index['period'].to_list()
-        print(th, len(set(class_ids)), len(set(index_list)))
+    # for i in x:
+    #     th = np.round(i, 5)
+    #     df_index = df.loc[df['std_score'] < th].copy()
+    #     class_ids = df_index['classIDx'].to_list()
+    #     df_index['period'] = df_index.classIDx.astype(str) + '-' + df_index.frame_idx.astype(str)
+    #     index_list = df_index['period'].to_list()
+    #     print(th, len(set(class_ids)), len(set(index_list)))
 
-    # df_index = df.loc[df['std_score'] > 0.1]
+    df_index = df.loc[df['std_score'] > 0.05].copy()
+    df_index.to_csv(OUTPUT_FILE, index=False, header=True)
+
+    # print(len(set(df_index['classIDx'])))
+    # print(len(df_index))
+
+
     # for idx, item in df_index.iterrows():
     #     print(item['classIDx'], item['frame_idx'], item['std_score'])
 
@@ -692,6 +699,105 @@ def join_KF_files():
     print("Number of references: {}".format(len(set(df['classIDx'].to_list()))))
     df.to_csv(OUTPUT_FILE, index=False, header=True)
 
+def get_one_full_separable():
+
+    REFERENCE_FILE = r'keyframe\KF_FS.csv'
+    OUTPUT_FILE = r'iciap_data\KF_FS.csv'
+
+    df = pd.read_csv(REFERENCE_FILE)    
+
+    data = []
+
+    for i in range(0, 243):        
+        df_video = df.loc[df['classIDx'] == i].copy()
+        dict_score = {}
+
+        for idx, item in df_video.iterrows():
+            score = np.round(item['mean_score'], 5)
+            frame_id = item['frame_idx']
+            dict_score[frame_id] = score
+        
+        if len(df_video) > 0:
+            max_index = int(max(dict_score, key = dict_score.get)) 
+            # print(dict_score)
+            # print(max_index)      
+            case = {
+                'classIDx': i,
+                'frame_idx': max_index
+            }
+            data.append(case)    
+
+    df_rs = pd.DataFrame(data)
+    df_rs.to_csv(OUTPUT_FILE, index=False, header=True)
+
+def get_one_worst():
+    
+    REFERENCE_FILE = r'keyframe\KF_worst.csv'
+    OUTPUT_FILE = r'iciap_data\KF_worst.csv'
+
+    df = pd.read_csv(REFERENCE_FILE)
+    df['period'] = df.classIDx.astype(str) + '-' + df.frame_idx.astype(str)
+    data = []
+
+    for i in range(0, 243):        
+        df_video = df.loc[df['classIDx'] == i].copy()
+        dict_score = {}
+
+        for idx, item in df_video.iterrows():
+            score = np.round(item['mean_score'], 5)          
+            frame_id = item['frame_idx']
+            dict_score[frame_id] = score
+        
+        if len(df_video) > 0:
+            max_index = int(min(dict_score, key = dict_score.get))
+            
+            case = {
+                'classIDx': i,
+                'frame_idx': max_index
+            }
+            data.append(case)
+
+    df_rs = pd.DataFrame(data)
+
+    # df_rs['period'] = df_rs.classIDx.astype(str) + '-' + df_rs.frame_idx.astype(str)
+
+    # dfe = df[df["period"].isin(df_rs["period"])]
+
+    # sorted_df = dfe.sort_values(by=['mean_score'], ascending=True)
+    # sorted_df = sorted_df.iloc[:27]
+
+    df_rs.to_csv(OUTPUT_FILE, index=False, header=True, columns=['classIDx', 'frame_idx'])
+
+def get_one_NC():
+    
+    REFERENCE_FILE = r'keyframe\KF_NC.csv'
+    OUTPUT_FILE = r'iciap_data\KF_NC.csv'
+
+    df = pd.read_csv(REFERENCE_FILE)    
+
+    data = []
+
+    for i in range(0, 243):        
+        df_video = df.loc[df['classIDx'] == i].copy()
+        dict_score = {}
+
+        for idx, item in df_video.iterrows():
+            score = np.round(item['mean_score'], 5)
+            frame_id = item['frame_idx']
+            dict_score[frame_id] = score
+        
+        if len(df_video) > 0:
+            max_index = int(max(dict_score, key = dict_score.get)) 
+            # print(dict_score)
+            # print(max_index)      
+            case = {
+                'classIDx': i,
+                'frame_idx': max_index
+            }
+            data.append(case)    
+
+    df_rs = pd.DataFrame(data)
+    df_rs.to_csv(OUTPUT_FILE, index=False, header=True)
 
 def main():
     print("[INFO] starting .........")
@@ -723,7 +829,7 @@ def main():
 
     # check_full_separable()
     # get_not_separable()
-    plot_not_separable()
+    # plot_not_separable()
 
     # get_not_full_separable()
     
@@ -734,7 +840,9 @@ def main():
     '''
     get 1 frame for 1 video
     '''
-    # get_maximum_index()
+    # get_one_full_separable()
+    # get_one_worst()
+    # get_one_NC()
     
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(

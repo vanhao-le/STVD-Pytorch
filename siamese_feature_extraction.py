@@ -20,12 +20,12 @@ image_w = config.image_w
 image_h = config.image_h
 image_mean = config.image_mean
 image_std = config.image_std
-annotations_file = r"training_data\train_with_neg.csv"
-root_path = r"E:\STVD_DL\data\train"
-batch_size = config.batch_size
+annotations_file = r"training_data\testing.csv"
+root_path = r"E:\STVD_DL\data\test"
+batch_size = 256
 os.environ['TORCH_HOME'] = r"model_assets"
 
-OUTPUT_FILE = r'training_data\siamese_train_descriptor.npz'
+OUTPUT_FILE = r'training_data\siamese_test_descriptor.npz'
 
 MODEL_PATH = r'model_assets\siamese_model.pth'
 

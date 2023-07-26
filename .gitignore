@@ -10,8 +10,14 @@ output_setD/*
 output_setC/*
 output_pooling/*
 training_data/*
+iciap_backup/*
+iciap_1105/*
+caip_plots/*
+iciap_data/*
+iciap_plots/*
 
 keyframe/*
+kf_character/*
 
 
 # Byte-compiled / optimized / DLL files

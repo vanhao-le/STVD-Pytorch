@@ -37,7 +37,7 @@ if __name__ == '__main__':
     count = 0
     for i in range(rows):               
         min_score = torch.tensor(1.)
-        vec_a = tensor_descriptors[i]        
+        vec_a = tensor_descriptors[i]
 
         result_mx = torch.matmul(tensor_descriptors, vec_a)  
         result_mx = torch.nan_to_num(result_mx)

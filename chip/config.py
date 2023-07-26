@@ -1,8 +1,8 @@
 
 # ========================= Pre-trained ==========================
 # IMAGE_SIZE = 224
-# # IMAGE_SIZE = 299 #InceptionV3
-# BATCH_SIZE = 650
+IMAGE_SIZE = 299 #InceptionV3
+BATCH_SIZE = 750
 
 
 
@@ -19,21 +19,21 @@ annotation_val = r'training_data\val.csv'
 annotation_test = r'training_data\test.csv'
 
 # ========================= Model Configs ==========================
-image_w = 192
-image_h = 144
-image_mean = [0.485, 0.456, 0.406] 
-image_std = [0.229, 0.224, 0.225]
+# image_w = 192
+# image_h = 144
+# image_mean = [0.485, 0.456, 0.406] 
+# image_std = [0.229, 0.224, 0.225]
 # image_mean = [0.5, 0.5, 0.5] 
 # image_std = [0.229, 0.224, 0.225]
-margin = 1.
+# margin = 1.
 # ========================= Learning Configs ==========================
-batch_size = 48
+# batch_size = 64
 # batch_size = 256
-num_workers = 2
-learning_rate = 1e-2
-momentum = 0.9
+# num_workers = 2
+# learning_rate = 1e-2
+# momentum = 0.9
 # weight_decay = 5e-4
-weight_decay = 1e-3
-step_size = 5
-num_epochs = 30
-embedding_size = 2048
+# weight_decay = 1e-3
+# step_size = 5
+# num_epochs = 50
+# embedding_size = 2048

@@ -107,9 +107,9 @@ def main():
     weight_decay = config.weight_decay
     step_size = config.step_size
 
-    optimizer =  optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    # optimizer =  optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 
-    # optimizer = optim.SGD(model.parameters(), lr=learning_rate,  momentum = momentum, weight_decay= weight_decay)
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate,  momentum = momentum, weight_decay= weight_decay)
     
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1, last_epoch=-1)
     model, log = train_model(model, criterion, optimizer, exp_lr_scheduler, dataloaders, dataset_sizes, device, num_epochs=num_epochs)
