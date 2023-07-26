@@ -21,7 +21,7 @@ root_path = r"E:\STVD_DL\data_setD\train"
 batch_size = config.BATCH_SIZE
 os.environ['TORCH_HOME'] = r"model_assets"
 
-OUTPUT_FILE = r'output_setD\MAC_ggl_train_descriptor.npz'
+OUTPUT_FILE = r'output_pooling\gglv1_train_descriptor.npz'
 
 def get_vgg_model():    
     model = models.vgg16(pretrained=True)
@@ -41,7 +41,7 @@ def get_resnet50_model():
     model = model.eval()   
     return model
 
-def get_inceptionv3_model():    
+def get_inceptionv1_model():    
     model = models.googlenet(pretrained=True)
     for param in model.parameters():
         param.requires_grad = False
@@ -65,12 +65,12 @@ def main():
     # pretrained_model = get_resnet50_model()
     # pretrained_model = get_vgg_model()
     # print(pretrained_model)
-    # pretrained_model = get_inceptionv3_model()
+    pretrained_model = get_inceptionv1_model()
     # print(pretrained_model)
 
     pool_names = ['mac', 'spoc', 'rmac', 'gem']
-    pretrained_model =  EmbeddingNet(pool_names[0])
-    # pretrained_model.eval()   
+    # pretrained_model =  EmbeddingNet(pool_names[0])
+    pretrained_model.eval()   
     # print(pretrained_model)
     
     # setting device on GPU if available, else CPU    
@@ -84,7 +84,7 @@ def main():
     # DEVICE = 'cuda:0'
 
     pretrained_model.to(DEVICE)
-    # summary(pretrained_model, (3, 299, 299))  
+    summary(pretrained_model, (3, 299, 299))  
 
     # return
 
@@ -95,12 +95,12 @@ def main():
     with torch.no_grad():
         for img_names, images, labels in stvd_loader:            
             images = images.to(DEVICE)
-            outputs = pretrained_model(images)
-            for i in range(len(outputs)):                 
-                outputs[i] = outputs[i] / (outputs[i].pow(2).sum(0, keepdim=True).sqrt())
-                image_ids.append(str(img_names[i]))        
-                class_ids.append(labels[i].numpy())
-                descriptors.append(outputs[i].cpu().numpy().squeeze())
+            # outputs = pretrained_model(images)
+            # for i in range(len(outputs)):                 
+            #     outputs[i] = outputs[i] / (outputs[i].pow(2).sum(0, keepdim=True).sqrt())
+            #     image_ids.append(str(img_names[i]))        
+            #     class_ids.append(labels[i].numpy())
+            #     descriptors.append(outputs[i].cpu().numpy().squeeze())
                 # print(img_names[i], labels[i].numpy(), outputs[i].cpu().numpy().squeeze().shape)
 
             # break

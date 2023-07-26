@@ -25,7 +25,7 @@ device = "cuda:0"
 tensor_r_descriptors = torch.from_numpy(r_descriptors)
 tensor_r_descriptors = tensor_r_descriptors.to(device)
 
-ouput_csv = r"output_pooling\MAC_ggl_matching.csv"
+ouput_csv = r"matching_caip\MAC_gglv1_matching.csv"
 
 if __name__ == '__main__':
     print("[INFO] starting .........")

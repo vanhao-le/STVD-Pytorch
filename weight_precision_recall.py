@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 # matching_file = r'iciap_data\rs50_matching.csv'
 
 # matching_file = r'iciap_data\KF_FS_matching.csv'
-matching_file = r'output_setD\gglv1_matching.csv'
-OUTPUT_FILE = r"output_setD\gglv1_result.npz"
+matching_file = r'matching_scores\gglv1_matching.csv'
+# OUTPUT_FILE = r"output_setD\gglv1_result.npz"
 
 # matching_file = r'output_pooling\RMAC_ggl_matching.csv'
 # OUTPUT_FILE = r"output_pooling\RMAC_ggl_result.npz"
@@ -49,10 +49,11 @@ def plot_precision_recall_curve():
     x_1, y_1 = zip(*data_1)
     x_2, y_2 = zip(*data_2)
 
-    plt.plot(x_1, y_1)
-    plt.plot(x_2, y_2)
+    plt.plot(x_1, y_1, label="Intra distribution")
+    plt.plot(x_2, y_2, label="Inter distribution")
     plt.xlabel("Cosine similarity")
     plt.ylabel("Distribution")
+    plt.legend(loc="upper left")
     plt.show()
 
 

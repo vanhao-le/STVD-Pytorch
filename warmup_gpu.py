@@ -2,10 +2,8 @@ import torch
 import torch.nn as nn
 import time
 
-def run(iters=10000):
+def run(iters=3000,  device = "cuda:0"):
     
-    device = "cuda:0"
-
     s1 = torch.cuda.Stream(device=device)
     s2 = torch.cuda.Stream(device=device)
     x = torch.rand(size=(1024*4, 1024*4)).to(device)
@@ -28,9 +26,9 @@ if __name__=='__main__':
     print("[INFO] starting .........")
     since = time.time()
     # warmup
-    run()
+    run( device = "cuda:0")
     torch.cuda.cudart().cudaProfilerStart()
-    run()
+    run( device = "cuda:1")
     torch.cuda.cudart().cudaProfilerStop()
 
     time_elapsed = time.time() - since

@@ -37,7 +37,7 @@ class EmbeddingNet(nn.Module):
         '''
         initialize features take only convolutions for features, always ends with ReLU to make last activations non-negative
         '''
-        features = list(net_in.children())[:-2] # -2 for ResNet; -1 for VGG
+        features = list(net_in.children())[:-3] # -2 for ResNet; -1 for VGG
         # # features = list(net_in.features.children())[:-1]
         self.features = nn.Sequential(*features)
       

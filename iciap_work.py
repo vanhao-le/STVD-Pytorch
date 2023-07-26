@@ -19,6 +19,14 @@ def cnn_plot():
     RMAC_RS50 = r"iciap_plots\RMAC_rs50_result.npz"
     RMAC_VGG = r"iciap_plots\RMAC_vgg16_result.npz"
 
+    VGG_RESULT = r"matching_scores\vgg16_result.npz"
+    RES_RESULT = r"matching_scores\rs50_result.npz"
+    GGL_RESULT = r"matching_scores\gglv1_result.npz"
+    MAC_RS50 = r"iciap_plots\MAC_rs50_result.npz"
+    MAC_VGG = r"iciap_plots\MAC_vgg16_result.npz"
+    RMAC_RS50 = r"iciap_plots\RMAC_rs50_result.npz"
+    RMAC_VGG = r"iciap_plots\RMAC_vgg16_result.npz"
+
     vgg_data = np.load(VGG_RESULT)
     vgg_threshold = vgg_data['threshold']
     vgg_precision = vgg_data['precision']
@@ -91,7 +99,7 @@ def cnn_plot():
  
     # ax2.set_xlim(0.75, 1.)
     # ax2.set_xlim(0., 1.)
-    ax2.set_ylim(0.95, 1.0)
+    # ax2.set_ylim(0.95, 1.0)
 
     for label in (ax2.get_xticklabels() + ax2.get_yticklabels()):
         label.set_fontproperties(font_prop)
@@ -428,8 +436,8 @@ def cnn_plot_comparision():
 
 def main():
 
-    cnn_plot_comparision()
-    # cnn_plot()
+    # cnn_plot_comparision()
+    cnn_plot()
 
     # keyframe_plot()
 
